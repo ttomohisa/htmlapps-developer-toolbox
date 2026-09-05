@@ -1,0 +1,1180 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f5f5f2">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'unsafe-inline' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data: blob:; media-src 'self' data: blob:; worker-src 'self' blob:; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Developer Toolbox</title>
+  <link rel="icon" href="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22%2316624f%22%2F%3E%0A%20%20%3Cg%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%225.2%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%0A%20%20%20%20%3Cpath%20d%3D%22M22%2022.5v-2.7a4%204%200%200%201%204-4h12a4%204%200%200%201%204%204v2.7%22%2F%3E%0A%20%20%20%20%3Crect%20x%3D%2211%22%20y%3D%2222.5%22%20width%3D%2242%22%20height%3D%2228.5%22%20rx%3D%226.2%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M11%2030.8h42%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M24%2040h12.2%22%2F%3E%0A%20%20%20%20%3Ccircle%20cx%3D%2240.3%22%20cy%3D%2240%22%20r%3D%223.2%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M24%2040%2019.2%2035.6%22%2F%3E%0A%20%20%20%20%3Cpath%20d%3D%22M24%2040%2019.2%2044.4%22%2F%3E%0A%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E%0A">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f5f2;
+      --surface: #fff;
+      --surface-muted: #f0f0ed;
+      --surface-hover: #e9e9e5;
+      --text: #20211f;
+      --muted: #666963;
+      --line: #dadbd6;
+      --line-strong: #bfc1ba;
+      --accent: #16624f;
+      --accent-hover: #0e503f;
+      --accent-soft: #e1f0ea;
+      --danger: #b3261e;
+      --warning: #8a5b08;
+      --warning-soft: #fff5d9;
+      --focus: #4d8bc7;
+      --shadow-sm: 0 1px 2px rgba(25,28,24,.08),0 1px 6px rgba(25,28,24,.04);
+      --shadow-md: 0 12px 34px rgba(25,28,24,.12);
+      --radius: 12px;
+      --header-height: 66px;
+      --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html { min-height: 100%; background: var(--bg); scroll-behavior: smooth; }
+    body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Yu Gothic UI","Hiragino Kaku Gothic ProN",Meiryo,sans-serif; font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+    button,input,textarea,select { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,summary:focus-visible { outline: 3px solid color-mix(in srgb,var(--focus) 55%,transparent); outline-offset: 2px; }
+    .sr-only { position:absolute!important; width:1px!important; height:1px!important; padding:0!important; margin:-1px!important; overflow:hidden!important; clip:rect(0,0,0,0)!important; white-space:nowrap!important; border:0!important; }
+    .app-header { position: sticky; z-index: 30; top: 0; min-height: var(--header-height); border-bottom: 1px solid color-mix(in srgb,var(--line) 82%,transparent); background: color-mix(in srgb,var(--bg) 92%,transparent); backdrop-filter: blur(16px) saturate(1.2); }
+    .header-inner { width:min(1180px,100%); min-height:var(--header-height); margin:0 auto; padding:10px clamp(14px,2.8vw,30px); display:flex; align-items:center; gap:14px; }
+    .brand { display:flex; align-items:center; gap:10px; min-width:0; }
+    .brand-mark { display:grid; place-items:center; width:38px; height:38px; flex:0 0 auto; border-radius:11px; background:var(--accent); color:#fff; box-shadow:var(--shadow-sm); }
+    .brand-mark svg { width:22px; height:22px; display:block; }
+    .brand-copy { min-width:0; }
+    .brand-name { margin:0; font-size:17px; line-height:1.2; letter-spacing:.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .version-badge { display:inline-flex; align-items:center; margin-left:7px; padding:1px 6px; border:1px solid var(--line); border-radius:999px; color:var(--muted); background:var(--surface-muted); font-size:10px; font-weight:650; vertical-align:2px; }
+    .brand-meta { margin:2px 0 0; color:var(--muted); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .header-actions { margin-left:auto; display:flex; align-items:center; gap:12px; }
+    .language-button { min-width:0; padding:5px 1px; border:0; background:transparent; color:var(--muted); font-size:12px; font-weight:750; letter-spacing:.02em; cursor:pointer; }
+    .language-button:hover { color:var(--text); }
+    .icon-button { display:inline-grid; place-items:center; width:38px; height:38px; padding:0; border:1px solid var(--line); border-radius:10px; background:var(--surface); cursor:pointer; transition:border-color .16s ease,background .16s ease,transform .16s ease; }
+    .icon-button:hover { border-color:var(--line-strong); background:var(--surface-hover); }
+    .icon-button:active { transform:translateY(1px); }
+    .icon-button svg { width:18px; height:18px; display:block; }
+    .header-icon-button { width:auto; height:auto; padding:5px 1px; border:0; border-radius:0; background:transparent; color:var(--muted); }
+    .header-icon-button:hover { background:transparent; color:var(--text); }
+    .main { width:min(1180px,100%); margin:0 auto; padding:20px clamp(14px,2.8vw,30px) 48px; }
+    .page-intro { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; padding:0 2px 16px; }
+    .page-intro h2 { margin:0; font-size:clamp(20px,3vw,25px); line-height:1.3; letter-spacing:-.025em; }
+    .page-intro p { margin:5px 0 0; max-width:760px; color:var(--muted); font-size:13px; }
+    .local-badge { display:inline-flex; align-items:center; gap:7px; flex:0 0 auto; margin-top:3px; padding:7px 10px; border:1px solid color-mix(in srgb,var(--accent) 24%,var(--line)); border-radius:999px; color:var(--accent); background:var(--accent-soft); font-size:12px; font-weight:700; white-space:nowrap; }
+    .local-badge svg { width:15px; height:15px; }
+    .panel { border:1px solid var(--line); border-radius:16px; background:var(--surface); box-shadow:var(--shadow-sm); }
+    .smart-panel { padding:16px; margin-bottom:16px; }
+    .smart-head { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:10px; }
+    .smart-title { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:780; }
+    .smart-title svg { width:17px; height:17px; color:var(--accent); }
+    .smart-note { color:var(--muted); font-size:11px; text-align:right; }
+    .smart-input-wrap { position:relative; }
+    .smart-input { width:100%; min-height:72px; max-height:170px; resize:vertical; padding:13px 42px 13px 14px; border:1px solid var(--line); border-radius:11px; background:#fbfbf9; color:var(--text); font-family:var(--mono); font-size:13px; line-height:1.55; }
+    .smart-clear { position:absolute; top:8px; right:8px; width:30px; height:30px; border:0; background:transparent; color:var(--muted); border-radius:8px; cursor:pointer; display:none; }
+    .smart-clear.show { display:grid; place-items:center; }
+    .smart-clear:hover { background:var(--surface-muted); color:var(--text); }
+    .smart-clear svg { width:16px; height:16px; }
+    .suggestions { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; min-height:0; }
+    .suggestion { display:inline-flex; align-items:center; gap:7px; min-height:34px; padding:6px 10px; border:1px solid var(--line); border-radius:9px; background:var(--surface); cursor:pointer; font-size:12px; font-weight:700; }
+    .suggestion:hover { border-color:color-mix(in srgb,var(--accent) 45%,var(--line)); background:var(--accent-soft); }
+    .suggestion svg { width:15px; height:15px; color:var(--accent); }
+    .smart-empty { margin:0; color:var(--muted); font-size:12px; }
+    .app-layout { display:grid; grid-template-columns:292px minmax(0,1fr); gap:16px; align-items:start; }
+    .tool-browser { position:sticky; top:calc(var(--header-height) + 16px); padding:12px; max-height:calc(100dvh - var(--header-height) - 32px); overflow:hidden; display:flex; flex-direction:column; }
+    .tool-search-wrap { position:relative; margin-bottom:9px; }
+    .tool-search-wrap svg { position:absolute; left:11px; top:50%; width:16px; height:16px; color:var(--muted); transform:translateY(-50%); pointer-events:none; }
+    .tool-search { width:100%; height:40px; padding:8px 55px 8px 35px; border:1px solid var(--line); border-radius:10px; background:#fbfbf9; }
+    .shortcut { position:absolute; right:8px; top:50%; transform:translateY(-50%); padding:2px 6px; border:1px solid var(--line); border-radius:6px; color:var(--muted); background:var(--surface); font:10px/1.4 var(--mono); }
+    .tool-list { overflow:auto; padding-right:2px; scrollbar-width:thin; }
+    .tool-section + .tool-section { margin-top:12px; }
+    .tool-section-title { padding:4px 6px 5px; color:var(--muted); font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+    .tool-row { width:100%; min-height:47px; display:grid; grid-template-columns:30px minmax(0,1fr) 30px; align-items:center; gap:8px; padding:5px 4px 5px 7px; border:0; border-radius:10px; background:transparent; text-align:left; cursor:pointer; }
+    .tool-row:hover { background:var(--surface-muted); }
+    .tool-row.active { background:var(--accent-soft); }
+    .tool-row-icon { display:grid; place-items:center; width:28px; height:28px; border-radius:8px; color:var(--accent); background:color-mix(in srgb,var(--accent-soft) 65%,white); }
+    .tool-row.active .tool-row-icon { background:var(--surface); }
+    .tool-row-icon svg { width:16px; height:16px; }
+    .tool-row-copy { min-width:0; }
+    .tool-row-title { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; font-weight:760; }
+    .tool-row-desc { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--muted); font-size:10px; margin-top:1px; }
+    .star-button { width:30px; height:30px; border:0; border-radius:8px; background:transparent; color:#8a8d86; cursor:pointer; display:grid; place-items:center; }
+    .star-button:hover { background:var(--surface); color:var(--text); }
+    .star-button.active { color:#956b0b; }
+    .star-button svg { width:16px; height:16px; }
+    .tool-empty { padding:22px 8px; color:var(--muted); text-align:center; font-size:12px; }
+    .browser-footer { border-top:1px solid var(--line); margin-top:9px; padding:9px 4px 0; display:flex; justify-content:space-between; gap:8px; color:var(--muted); font-size:10px; }
+    .text-button { padding:2px 0; border:0; background:transparent; color:var(--muted); font-size:11px; cursor:pointer; }
+    .text-button:hover { color:var(--text); text-decoration:underline; }
+    .workspace { min-width:0; overflow:hidden; }
+    .workspace-header { padding:16px 18px 14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+    .workspace-title-row { display:flex; align-items:center; gap:9px; }
+    .workspace-tool-icon { display:grid; place-items:center; width:34px; height:34px; border-radius:10px; background:var(--accent-soft); color:var(--accent); }
+    .workspace-tool-icon svg { width:18px; height:18px; }
+    .workspace h2 { margin:0; font-size:18px; letter-spacing:-.02em; }
+    .workspace-description { margin:3px 0 0; color:var(--muted); font-size:12px; }
+    .workspace-actions { display:flex; align-items:center; gap:6px; }
+    .mobile-tools-button { display:none; min-height:36px; padding:7px 10px; border:1px solid var(--line); border-radius:9px; background:var(--surface); font-size:12px; font-weight:720; cursor:pointer; }
+    .workspace-body { padding:18px; }
+    .field-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; }
+    .field-grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    .field { min-width:0; }
+    .field.full { grid-column:1/-1; }
+    .field label,.field-label { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 6px; font-size:11px; font-weight:760; color:#4f534d; }
+    .field-hint { color:var(--muted); font-size:10px; font-weight:500; }
+    .input,.select,.textarea { width:100%; border:1px solid var(--line); border-radius:10px; background:#fbfbf9; color:var(--text); }
+    .input,.select { height:41px; padding:8px 11px; }
+    .textarea { min-height:145px; resize:vertical; padding:12px; line-height:1.6; }
+    .code { font-family:var(--mono); font-size:12px; }
+    .output-box { min-height:44px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; background:var(--surface-muted); overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; font-family:var(--mono); font-size:12px; line-height:1.6; }
+    .output-box.empty { color:var(--muted); font-family:inherit; }
+    .button-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .button { min-height:39px; padding:8px 13px; border:1px solid var(--line); border-radius:9px; background:var(--surface); cursor:pointer; font-weight:720; font-size:12px; transition:border-color .15s ease,background .15s ease,transform .15s ease; }
+    .button:hover { border-color:var(--line-strong); background:var(--surface-hover); }
+    .button:active { transform:translateY(1px); }
+    .button.primary { border-color:var(--accent); background:var(--accent); color:#fff; }
+    .button.primary:hover { border-color:var(--accent-hover); background:var(--accent-hover); }
+    .button.small { min-height:32px; padding:5px 9px; font-size:11px; }
+    .button.danger { color:var(--danger); }
+    .segmented { display:inline-flex; padding:2px; border:1px solid var(--line); border-radius:9px; background:var(--surface-muted); }
+    .segment { min-height:31px; padding:5px 10px; border:0; border-radius:7px; background:transparent; color:var(--muted); font-size:11px; font-weight:700; cursor:pointer; }
+    .segment.active { background:var(--surface); color:var(--text); box-shadow:var(--shadow-sm); }
+    .result-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:15px 0 6px; }
+    .result-head strong { font-size:11px; }
+    .result-actions { display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:2px 9px; }
+    .copy-link { display:inline-flex; align-items:center; gap:5px; min-height:28px; padding:3px 5px; border:0; border-radius:7px; background:transparent; color:var(--accent); cursor:pointer; font-size:11px; font-weight:700; }
+    .copy-link:hover { background:var(--accent-soft); }
+    .copy-link svg { width:14px; height:14px; }
+    .tool-row.keyboard-active { background:var(--accent-soft); box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 30%,transparent); }
+    .notice { margin-top:12px; padding:10px 11px; border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line)); border-radius:10px; background:var(--accent-soft); font-size:11px; line-height:1.6; }
+    .notice.warning { border-color:#ead49d; background:var(--warning-soft); color:#6d4b08; }
+    .status-line { margin-top:8px; font-size:11px; color:var(--muted); }
+    .status-line.ok { color:var(--accent); }
+    .status-line.error { color:var(--danger); }
+    .metric-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:12px; }
+    .metric { padding:10px; border-radius:10px; background:var(--surface-muted); min-width:0; }
+    .metric-value { display:block; overflow:hidden; text-overflow:ellipsis; font-size:14px; font-weight:800; }
+    .metric-label { display:block; color:var(--muted); font-size:9px; margin-top:2px; }
+    .kv-list { display:grid; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+    .kv-row { display:grid; grid-template-columns:145px minmax(0,1fr); border-top:1px solid var(--line); }
+    .kv-row:first-child { border-top:0; }
+    .kv-key,.kv-value { padding:9px 10px; min-width:0; }
+    .kv-key { color:var(--muted); background:var(--surface-muted); font-size:11px; }
+    .kv-value { overflow-wrap:anywhere; font-family:var(--mono); font-size:11px; }
+    .match-preview { min-height:150px; max-height:330px; overflow:auto; padding:12px; border:1px solid var(--line); border-radius:10px; background:#fbfbf9; white-space:pre-wrap; overflow-wrap:anywhere; font:12px/1.65 var(--mono); }
+    mark { padding:0 1px; border-radius:3px; background:#f6df95; color:inherit; }
+    .match-list { display:grid; gap:6px; margin-top:9px; }
+    .match-item { padding:8px 10px; border-radius:9px; background:var(--surface-muted); font:11px/1.55 var(--mono); overflow-wrap:anywhere; }
+    .claim-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:10px; }
+    .claim { padding:9px; border:1px solid var(--line); border-radius:9px; background:var(--surface); }
+    .claim-name { color:var(--muted); font:10px var(--mono); }
+    .claim-value { margin-top:3px; font-size:11px; font-weight:700; overflow-wrap:anywhere; }
+    .query-table { width:100%; border-collapse:collapse; font-size:11px; }
+    .query-table th,.query-table td { padding:7px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; overflow-wrap:anywhere; }
+    .query-table th { color:var(--muted); font-weight:700; }
+    .query-table code { font-family:var(--mono); }
+    .case-list { display:grid; gap:7px; }
+    .case-row { display:grid; grid-template-columns:130px minmax(0,1fr) 32px; align-items:center; gap:8px; padding:7px 8px 7px 10px; border:1px solid var(--line); border-radius:9px; }
+    .case-name { color:var(--muted); font-size:10px; }
+    .case-value { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:11px var(--mono); }
+    .inline-checks { display:flex; flex-wrap:wrap; gap:7px 14px; }
+    .check { display:inline-flex; align-items:center; gap:6px; color:var(--text); font-size:11px; }
+    .check input { accent-color:var(--accent); }
+    .next-runs { margin:8px 0 0; padding-left:21px; font:11px/1.7 var(--mono); }
+    .picker-dialog { width:min(560px,calc(100% - 24px)); max-height:min(760px,calc(100dvh - 24px)); padding:0; border:1px solid var(--line); border-radius:16px; background:var(--surface); box-shadow:var(--shadow-md); }
+    dialog::backdrop { background:rgba(15,17,14,.52); backdrop-filter:blur(4px); }
+    .dialog-header { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 17px; border-bottom:1px solid var(--line); }
+    .dialog-header h2 { margin:0; font-size:16px; }
+    .dialog-body { padding:17px; overflow:auto; max-height:calc(100dvh - 100px); }
+    .picker-search { margin-bottom:9px; }
+    .picker-list { max-height:calc(100dvh - 190px); overflow:auto; }
+    .help-dialog { width:min(650px,calc(100% - 28px)); max-height:min(760px,calc(100dvh - 28px)); padding:0; border:1px solid var(--line); border-radius:16px; background:var(--surface); color:var(--text); box-shadow:var(--shadow-md); }
+    .dialog-body h3 { margin:23px 0 7px; padding-top:17px; border-top:1px solid var(--line); font-size:13px; }
+    .dialog-body h3:first-child { margin-top:0; padding-top:0; border-top:0; }
+    .dialog-body p,.dialog-body li { color:var(--muted); font-size:12px; line-height:1.7; }
+    .dialog-body p { margin:7px 0 0; }
+    .dialog-body ul,.dialog-body ol { margin:7px 0 0; padding-left:21px; }
+    .dialog-note { margin-top:12px!important; padding:10px 11px; border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line)); border-radius:10px; background:var(--accent-soft); color:var(--text)!important; }
+    .app-confirm-dialog { width:min(420px,calc(100% - 24px)); padding:0; border:1px solid var(--line); border-radius:16px; background:var(--surface); box-shadow:var(--shadow-md); }
+    .app-confirm-header { display:flex; align-items:center; justify-content:space-between; padding:15px 18px 13px; border-bottom:1px solid var(--line); }
+    .app-confirm-title { margin:0; font-size:17px; }
+    .app-confirm-close { display:grid; place-items:center; width:34px; height:34px; border:0; border-radius:9px; background:transparent; cursor:pointer; }
+    .app-confirm-close:hover { background:var(--surface-muted); }
+    .app-confirm-close svg { width:18px; height:18px; }
+    .app-confirm-body { padding:18px; }
+    .app-confirm-message { margin:0; color:var(--muted); font-size:13px; line-height:1.65; }
+    .app-confirm-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:18px; }
+    .app-confirm-button { min-height:39px; padding:8px 14px; border:1px solid var(--line); border-radius:9px; background:var(--surface); cursor:pointer; font-weight:700; }
+    .app-confirm-button.primary { border-color:var(--accent); background:var(--accent); color:#fff; }
+    .app-confirm-button.danger { border-color:var(--danger); background:var(--danger); color:#fff; }
+    .toast { position:fixed; right:18px; bottom:18px; z-index:60; max-width:min(360px,calc(100vw - 36px)); padding:10px 13px; border:1px solid var(--line); border-radius:10px; background:var(--surface); box-shadow:var(--shadow-md); opacity:0; transform:translateY(10px); pointer-events:none; transition:opacity .18s ease,transform .18s ease; font-size:12px; }
+    .toast.show { opacity:1; transform:translateY(0); }
+    .build-details { margin-top:16px; border:1px solid var(--line); border-radius:11px; background:var(--surface); overflow:hidden; }
+    .build-details summary { padding:12px 14px; cursor:pointer; font-size:11px; font-weight:700; }
+    .build-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:0 13px 13px; }
+    .build-item { padding:9px; border-radius:9px; background:var(--surface-muted); }
+    .build-item span { display:block; color:var(--muted); font-size:9px; }
+    .build-item strong { display:block; margin-top:2px; overflow-wrap:anywhere; font-size:10px; }
+    footer { width:min(1180px,100%); margin:0 auto; padding:0 clamp(14px,2.8vw,30px) 28px; color:var(--muted); font-size:11px; }
+    @media (max-width: 860px) {
+      .app-layout { grid-template-columns:1fr; }
+      .tool-browser { display:none; }
+      .mobile-tools-button { display:inline-flex; align-items:center; gap:6px; }
+      .workspace-actions .star-button { display:none; }
+    }
+    @media (max-width: 640px) {
+      .header-inner { gap:9px; }
+      .brand-meta { display:none; }
+      .header-actions { gap:10px; }
+      .main { padding-top:14px; padding-bottom:34px; }
+      .page-intro { align-items:center; padding-bottom:12px; }
+      .page-intro h2 { font-size:18px; }
+      .page-intro p { display:none; }
+      .local-badge { padding:5px 8px; font-size:10px; }
+      .smart-panel { padding:12px; margin-bottom:12px; border-radius:13px; }
+      .smart-head { margin-bottom:8px; }
+      .smart-note { display:none; }
+      .smart-input { min-height:62px; font-size:12px; }
+      .workspace-header { padding:13px; align-items:center; }
+      .workspace-tool-icon { width:31px; height:31px; }
+      .workspace h2 { font-size:16px; }
+      .workspace-description { font-size:10px; }
+      .workspace-body { padding:13px; }
+      .field-grid,.field-grid.three { grid-template-columns:1fr; }
+      .field.full { grid-column:auto; }
+      .metric-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .claim-grid { grid-template-columns:1fr; }
+      .kv-row { grid-template-columns:105px minmax(0,1fr); }
+      .case-row { grid-template-columns:95px minmax(0,1fr) 30px; }
+      .build-grid { grid-template-columns:1fr; }
+      .toast { right:12px; bottom:12px; max-width:calc(100vw - 24px); }
+    }
+    @media (max-width: 390px) {
+      .brand-mark { width:35px; height:35px; }
+      .brand-name { font-size:15px; }
+      .version-badge { font-size:9px; margin-left:4px; }
+      .local-badge span { display:none; }
+      .suggestion { max-width:100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; animation:none!important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.95" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.3 8.4v-.9A1.5 1.5 0 0 1 9.8 6h4.4a1.5 1.5 0 0 1 1.5 1.5v.9"/>
+            <rect x="3.5" y="8.4" width="17" height="11.1" rx="2.3"/>
+            <path d="M3.5 11.5h17"/>
+            <path d="M8.9 15.8h5.8"/>
+            <circle cx="16.4" cy="15.8" r="1.35"/>
+            <path d="M8.9 15.8 7 14.1"/>
+            <path d="M8.9 15.8 7 17.5"/>
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <h1 class="brand-name"><span id="brandName">Developer Toolbox</span><span class="version-badge" id="versionBadge">v1.0.0</span></h1>
+          <p class="brand-meta" id="brandMeta" data-i18n="brandMeta">Developer tools · local only · single HTML</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="language-button" id="languageButton" type="button" aria-label="Switch to English">EN</button>
+        <button class="icon-button header-icon-button" id="helpButton" type="button" data-i18n-title="helpTitle" data-i18n-aria-label="helpTitle" title="使い方と注意事項" aria-label="使い方と注意事項">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.8 9a2.4 2.4 0 1 1 3.7 2c-1 .7-1.5 1.1-1.5 2.3M12 17h.01"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="page-intro" aria-labelledby="pageTitle">
+      <div>
+        <h2 id="pageTitle" data-i18n="pageTitle">開発中の「ちょっと変換」をここで。</h2>
+        <p data-i18n="pageIntro">貼り付けた内容を判定して、Base64・JSON・JWT・日時などの適したツールへすぐ渡せます。</p>
+      </div>
+      <span class="local-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3 5 6v5c0 4.7 2.9 8.1 7 10 4.1-1.9 7-5.3 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+        <span data-i18n="localOnly">外部送信なし</span>
+      </span>
+    </section>
+
+    <!-- APP:BEGIN -->
+    <section class="panel smart-panel" aria-labelledby="smartTitle">
+      <div class="smart-head">
+        <div class="smart-title" id="smartTitle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.4 4.2L18 9l-4.6 1.8L12 15l-1.4-4.2L6 9l4.6-1.8L12 3Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></svg>
+          <span data-i18n="smartTitle">Smart Input</span>
+        </div>
+        <span class="smart-note" data-i18n="smartNote">入力内容は保存しません</span>
+      </div>
+      <div class="smart-input-wrap">
+        <label class="sr-only" for="smartInput" data-i18n="smartLabel">判定したい文字列</label>
+        <textarea class="smart-input" id="smartInput" spellcheck="false" data-i18n-placeholder="smartPlaceholder" placeholder="JSON、JWT、URL、Base64、UNIX timestamp などを貼り付け…"></textarea>
+        <button class="smart-clear" id="smartClear" type="button" data-i18n-aria-label="clearInput" aria-label="入力を消去">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <div class="suggestions" id="smartSuggestions" aria-live="polite"></div>
+    </section>
+
+    <div class="app-layout">
+      <aside class="panel tool-browser" aria-label="Tools">
+        <div class="tool-search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <label class="sr-only" for="toolSearch" data-i18n="searchTools">ツールを検索</label>
+          <input class="tool-search" id="toolSearch" type="search" autocomplete="off" data-i18n-placeholder="searchTools" placeholder="ツールを検索">
+          <span class="shortcut">Ctrl K</span>
+        </div>
+        <div class="tool-list" id="toolList"></div>
+        <div class="browser-footer">
+          <span id="toolCount"></span>
+          <button class="text-button" id="resetPersonalization" type="button" data-i18n="resetPersonalization">★をリセット</button>
+        </div>
+      </aside>
+
+      <section class="panel workspace" id="workspace" aria-live="polite">
+        <div class="workspace-header">
+          <div class="workspace-title-row">
+            <span class="workspace-tool-icon" id="workspaceIcon" aria-hidden="true"></span>
+            <div>
+              <h2 id="workspaceTitle"></h2>
+              <p class="workspace-description" id="workspaceDescription"></p>
+            </div>
+          </div>
+          <div class="workspace-actions">
+            <button class="mobile-tools-button" id="mobileToolsButton" type="button">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+              <span data-i18n="tools">ツール</span>
+            </button>
+            <button class="star-button" id="workspaceFavorite" type="button" data-i18n-aria-label="favorite" aria-label="お気に入り">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="workspace-body" id="workspaceBody"></div>
+      </section>
+    </div>
+    <!-- APP:END -->
+
+    <details class="build-details">
+      <summary data-i18n="buildInfo">ビルド情報</summary>
+      <div class="build-grid">
+        <div class="build-item"><span data-i18n="appVersion">アプリバージョン</span><strong id="buildVersion">—</strong></div>
+        <div class="build-item"><span data-i18n="builtAt">ビルド日時</span><strong id="builtAt">—</strong></div>
+        <div class="build-item"><span data-i18n="dependencies">内包依存</span><strong id="dependencyCount">0</strong></div>
+      </div>
+    </details>
+  </main>
+
+  <footer><span id="footerName">Developer Toolbox</span> · MIT License · <span data-i18n="footer">local-first developer toolbox</span></footer>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <dialog class="picker-dialog" id="toolPickerDialog" aria-labelledby="toolPickerTitle">
+    <div class="dialog-header">
+      <h2 id="toolPickerTitle" data-i18n="chooseTool">ツールを選ぶ</h2>
+      <button class="icon-button" id="closeToolPicker" type="button" data-i18n-aria-label="close" aria-label="閉じる">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <div class="tool-search-wrap picker-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+        <label class="sr-only" for="pickerSearch" data-i18n="searchTools">ツールを検索</label>
+        <input class="tool-search" id="pickerSearch" type="search" autocomplete="off" data-i18n-placeholder="searchTools" placeholder="ツールを検索">
+      </div>
+      <div class="picker-list" id="pickerList"></div>
+    </div>
+  </dialog>
+
+  <dialog class="app-confirm-dialog" id="appConfirmDialog" aria-labelledby="appConfirmTitle" aria-describedby="appConfirmMessage">
+    <div class="app-confirm-header">
+      <h2 class="app-confirm-title" id="appConfirmTitle">確認</h2>
+      <button class="app-confirm-close" id="appConfirmClose" type="button" data-i18n-aria-label="close" aria-label="閉じる">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </div>
+    <div class="app-confirm-body">
+      <p class="app-confirm-message" id="appConfirmMessage"></p>
+      <div class="app-confirm-actions">
+        <button class="app-confirm-button" id="appConfirmCancel" type="button">キャンセル</button>
+        <button class="app-confirm-button primary" id="appConfirmOk" type="button">実行する</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="help-dialog" id="helpDialog" aria-labelledby="helpTitle">
+    <div class="dialog-header">
+      <h2 id="helpTitle" data-i18n="helpTitle">使い方と注意事項</h2>
+      <button class="icon-button" id="closeHelpButton" type="button" data-i18n-title="close" data-i18n-aria-label="close" title="閉じる" aria-label="閉じる">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="m7 7 10 10M17 7 7 17"/></svg>
+      </button>
+    </div>
+    <div class="dialog-body">
+      <!-- APP:HELP:BEGIN -->
+      <h3 data-i18n="helpBasicsTitle">基本操作</h3>
+      <ol>
+        <li data-i18n="helpStep1">Smart Inputへ文字列を貼ると、形式を判定して使えそうなツールを候補表示します。</li>
+        <li data-i18n="helpStep2">PCでは左の一覧、スマホでは「ツール」から機能を切り替えます。Ctrl/⌘ + Kでも検索へ移動できます。</li>
+        <li data-i18n="helpStep3">★を付けると上部のお気に入りにも表示されます。元のカテゴリにも残ります。</li>
+      </ol>
+      <h3 data-i18n="helpPrivacyTitle">プライバシー</h3>
+      <p data-i18n="helpPrivacyBody">入力・変換・解析はブラウザー内だけで行います。Smart Inputや各ツールへ入れた内容はlocalStorageへ保存しません。保存するのは言語とお気に入りのツールIDだけです。</p>
+      <h3 data-i18n="helpNotesTitle">注意事項</h3>
+      <ul>
+        <li data-i18n="helpNoteJwt">JWTはHeader/Payloadのデコードのみです。署名の正当性は検証しません。</li>
+        <li data-i18n="helpNoteCron">Cronは一般的な5フィールド形式を対象にし、次回実行は端末のローカルタイムゾーンで計算します。実際のcron実装との差異に注意してください。</li>
+        <li data-i18n="helpNoteRegex">正規表現はブラウザーのJavaScript RegExp仕様です。入力したパターンによっては処理に時間がかかる場合があります。</li>
+        <li data-i18n="helpNoteHash">ファイルHashはファイル全体をブラウザーのメモリへ読み込んで計算します。非常に大きなファイルでは端末負荷が高くなります。</li>
+      </ul>
+      <p class="dialog-note" data-i18n="helpOffline">実行時通信はCSPで遮断しています。通常版とgzip自己解凍版のどちらも単一HTMLとしてローカルで利用できます。</p>
+      <!-- APP:HELP:END -->
+    </div>
+  </dialog>
+
+  <script>
+  (() => {
+    'use strict';
+
+    const APP_CONFIG = __APP_CONFIG_JSON__;
+    const BUILD_MANIFEST = __BUILD_MANIFEST_JSON__;
+    const EMBEDDED_ASSET_BUNDLE_BASE64 = '__EMBEDDED_ASSET_BUNDLE_BASE64__';
+
+    function decodeBase64Bytes(base64) {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+      return bytes;
+    }
+    function decodeBase64Utf8(base64) { return new TextDecoder().decode(decodeBase64Bytes(base64)); }
+    const assetBundle = JSON.parse(decodeBase64Utf8(EMBEDDED_ASSET_BUNDLE_BASE64));
+    const blobUrls = new Set();
+    window.StandaloneAssets = Object.freeze({
+      manifest: BUILD_MANIFEST,
+      list() { return Object.entries(assetBundle.dependencies || {}).flatMap(([id, dep]) => Object.keys(dep.assets || {}).map(key => `${id}/${key}`)); },
+      has(id,key) { return Boolean(assetBundle.dependencies?.[id]?.assets?.[key]); },
+      bytes(id,key) { const asset=assetBundle.dependencies?.[id]?.assets?.[key]; if(!asset) throw new Error(`Embedded asset not found: ${id}/${key}`); return decodeBase64Bytes(asset.base64); },
+      text(id,key) { return new TextDecoder().decode(this.bytes(id,key)); },
+      blobUrl(id,key) { const asset=assetBundle.dependencies?.[id]?.assets?.[key]; if(!asset) throw new Error(`Embedded asset not found: ${id}/${key}`); const url=URL.createObjectURL(new Blob([this.bytes(id,key)],{type:asset.mime||'application/octet-stream'})); blobUrls.add(url); return url; }
+    });
+    window.addEventListener('pagehide', () => { blobUrls.forEach(url => URL.revokeObjectURL(url)); blobUrls.clear(); });
+
+    const translations = {
+      ja: {
+        brandMeta:'Developer tools · ローカル処理 · 単一HTML', pageTitle:'開発中の「ちょっと変換」をここで。', pageIntro:'貼り付けた内容を判定して、Base64・JSON・JWT・日時などの適したツールへすぐ渡せます。', localOnly:'外部送信なし',
+        smartTitle:'Smart Input', smartNote:'入力内容は保存しません', smartLabel:'判定したい文字列', smartPlaceholder:'JSON、JWT、URL、Base64、UNIX timestamp などを貼り付け…', smartEmpty:'形式を判定すると候補がここに出ます。', clearInput:'入力を消去',
+        searchTools:'ツールを検索', tools:'ツール', chooseTool:'ツールを選ぶ', favorite:'お気に入り', favorites:'お気に入り', allTools:'すべてのツール', resetPersonalization:'★をリセット', resetTitle:'お気に入りをリセット', resetMessage:'お気に入りをすべて解除します。入力内容は保存していないため影響しません。', resetAction:'リセット', resetDone:'お気に入りをリセットしました', cancel:'キャンセル', close:'閉じる', noTools:'一致するツールがありません', toolCount:'{n} tools',
+        copy:'コピー', copied:'コピーしました', copyFailed:'コピーできませんでした', sendToTool:'別ツールへ', sendResultTitle:'結果を別ツールへ', swap:'入れ替え', emptyResult:'送れる結果がありません', sessionOnly:'入力内容はこのタブを閉じるまでだけ保持します', input:'入力', output:'出力', result:'結果', encode:'エンコード', decode:'デコード', format:'整形', minify:'圧縮', sortKeys:'キーを並べ替え', validate:'検証', validJson:'有効なJSONです', invalidJson:'JSONエラー', clear:'クリア', generate:'生成', regenerate:'再生成', now:'現在時刻', parse:'解析', test:'テスト', replace:'置換', calculate:'計算', file:'ファイル', selectFile:'ファイルを選択', processing:'処理中…',
+        categoryEncode:'Encode', categoryData:'Data', categoryTime:'Time', categorySecurity:'Security', categoryText:'Text', categoryWeb:'Web', categoryGenerate:'Generate', categoryDeveloper:'Developer',
+        base64Title:'Base64', base64Desc:'UTF-8テキストをBase64へ変換', base64UrlSafe:'URL-safeで出力', base64Invalid:'Base64としてデコードできません',
+        urlCodecTitle:'URL Encode / Decode', urlCodecDesc:'URIComponent形式を相互変換', componentMode:'URIComponent', fullUrlMode:'URI全体', invalidEncoding:'不正なエスケープを含んでいます',
+        entityTitle:'HTML Entity', entityDesc:'HTML特殊文字を安全に変換',
+        jsonTitle:'JSON', jsonDesc:'整形・圧縮・検証・キーソート', jsonInputHint:'JSON文字列', jsonOutputHint:'結果',
+        timestampTitle:'UNIX Timestamp', timestampDesc:'秒・ミリ秒・日時を相互変換', timestampValue:'Timestamp / 日時', timestampHint:'10桁/13桁、ISO 8601、日時文字列', localTime:'ローカル', utcTime:'UTC', iso8601:'ISO 8601', unixSeconds:'UNIX 秒', unixMilliseconds:'UNIX ミリ秒', relative:'相対時間', invalidDate:'日時として解釈できません',
+        jwtTitle:'JWT Decoder', jwtDesc:'Header / Payloadと時刻claimを確認', jwtToken:'JWT', jwtWarning:'デコードのみです。署名が正しいことを意味しません。', jwtInvalid:'JWTとしてデコードできません', header:'Header', payload:'Payload', signature:'Signature', expired:'期限切れ', active:'有効期限内', notYetValid:'まだ有効期間前',
+        cronTitle:'Cron', cronDesc:'5フィールドcronと次回実行を確認', cronExpression:'Cron式', cronHint:'minute hour day month weekday', cronTimezone:'計算タイムゾーン', cronNext:'次回5回', cronInvalid:'Cron式を解析できません', cronEveryMinute:'毎分', cronEveryNMinutes:'{n}分ごと', cronDaily:'毎日 {time}', cronHourly:'毎時 {minute}分', cronGeneric:'5フィールドCron',
+        regexTitle:'Regex Tester', regexDesc:'マッチ・グループ・置換を確認', pattern:'パターン', flags:'Flags', testText:'テスト文字列', replacement:'置換文字列', matches:'マッチ', noMatches:'マッチなし', regexInvalid:'正規表現エラー', tooManyMatches:'表示は先頭1000件までです',
+        hashTitle:'Hash', hashDesc:'SHA-1 / SHA-2をブラウザーで計算', hashAlgorithm:'アルゴリズム', hashText:'テキスト', hashFileHint:'選択したファイルは外部へ送信されません', hashEmpty:'テキストを入力するかファイルを選択してください', hashUnavailable:'このコンテキストではWeb Crypto APIを利用できません', fileName:'ファイル名', fileSize:'サイズ',
+        uuidTitle:'UUID v4', uuidDesc:'crypto.randomUUIDで安全に生成', uuidCount:'生成数', uuidFallback:'暗号学的乱数から生成',
+        randomTitle:'Random String', randomDesc:'文字種と長さを指定して生成', length:'長さ', uppercase:'A-Z', lowercase:'a-z', numbers:'0-9', symbols:'記号', randomInvalid:'1つ以上の文字種を選択してください',
+        urlParserTitle:'URL Parser', urlParserDesc:'URLを構成要素とQueryへ分解', urlValue:'URL', urlExample:'https://example.com:8080/path?a=1#section', protocol:'Protocol', hostname:'Hostname', port:'Port', pathname:'Pathname', hashFragment:'Hash', origin:'Origin', query:'Query parameters', invalidUrl:'URLとして解析できません',
+        numberTitle:'Number Base', numberDesc:'2 / 8 / 10 / 16進数を相互変換', sourceBase:'入力の基数', auto:'自動', decimal:'10進', hexadecimal:'16進', binary:'2進', octal:'8進', integerOnly:'整数を入力してください',
+        caseTitle:'Case Converter', caseDesc:'camel / snake / kebab等へ一括変換', sourceText:'元の文字列', camelCase:'camelCase', pascalCase:'PascalCase', snakeCase:'snake_case', kebabCase:'kebab-case', constantCase:'CONSTANT_CASE', titleCase:'Title Case',
+        textTitle:'Text Inspector', textDesc:'文字数・UTF-8 byte・行数を確認', characters:'文字', utf8Bytes:'UTF-8 bytes', utf16Units:'UTF-16 units', words:'単語', lines:'行', trim:'前後空白を削除', dedupe:'重複行を削除', sortLines:'行をソート',
+        detectedJson:'JSONとして認識', detectedJwt:'JWTらしい形式', detectedUrl:'URLとして認識', detectedTimestamp:'Timestampらしい数値', detectedBase64:'Base64らしい形式', inspectText:'文字列を調べる',
+        helpTitle:'使い方と注意事項', helpBasicsTitle:'基本操作', helpStep1:'Smart Inputへ文字列を貼ると、形式を判定して使えそうなツールを候補表示します。', helpStep2:'PCでは左の一覧、スマホでは「ツール」から機能を切り替えます。Ctrl/⌘ + Kで検索パレットを開き、↑↓とEnterでも選択できます。', helpStep3:'★を付けると上部のお気に入りにも表示されます。元のカテゴリにも残るので、どちらからでも開けます。', helpPrivacyTitle:'プライバシー', helpPrivacyBody:'入力・変換・解析はブラウザー内だけで行います。各ツールの入力はこのタブを開いている間だけメモリに保持し、localStorageへは保存しません。永続保存するのは言語とお気に入りのツールIDだけです。', helpNotesTitle:'注意事項', helpNoteJwt:'JWTはHeader/Payloadのデコードのみです。署名の正当性は検証しません。', helpNoteCron:'Cronは一般的な5フィールド形式を対象にし、次回実行は端末のローカルタイムゾーンで計算します。実際のcron実装との差異に注意してください。', helpNoteRegex:'正規表現はブラウザーのJavaScript RegExp仕様です。入力したパターンによっては処理に時間がかかる場合があります。', helpNoteHash:'ファイルHashはファイル全体をブラウザーのメモリへ読み込んで計算します。非常に大きなファイルでは端末負荷が高くなります。', helpOffline:'実行時通信はCSPで遮断しています。通常版とgzip自己解凍版のどちらも単一HTMLとしてローカルで利用できます。',
+        buildInfo:'ビルド情報', appVersion:'アプリバージョン', builtAt:'ビルド日時', dependencies:'内包依存', footer:'local-first developer toolbox'
+      },
+      en: {
+        brandMeta:'Developer tools · local only · single HTML', pageTitle:'Small developer conversions, in one place.', pageIntro:'Paste a value, detect its format, and jump straight to Base64, JSON, JWT, time, and other useful tools.', localOnly:'No data upload',
+        smartTitle:'Smart Input', smartNote:'Input is never saved', smartLabel:'Value to inspect', smartPlaceholder:'Paste JSON, JWT, URL, Base64, UNIX timestamp, or plain text…', smartEmpty:'Detected formats and suggested tools will appear here.', clearInput:'Clear input',
+        searchTools:'Search tools', tools:'Tools', chooseTool:'Choose a tool', favorite:'Favorite', favorites:'Favorites', allTools:'All tools', resetPersonalization:'Reset stars', resetTitle:'Reset favorites', resetMessage:'Remove all favorites. Tool input is not persisted and will not be affected.', resetAction:'Reset', resetDone:'Favorites reset', cancel:'Cancel', close:'Close', noTools:'No matching tools', toolCount:'{n} tools',
+        copy:'Copy', copied:'Copied', copyFailed:'Could not copy', sendToTool:'Send to tool', sendResultTitle:'Send result to another tool', swap:'Swap', emptyResult:'There is no result to send', sessionOnly:'Tool input is kept only until this tab is closed', input:'Input', output:'Output', result:'Result', encode:'Encode', decode:'Decode', format:'Format', minify:'Minify', sortKeys:'Sort keys', validate:'Validate', validJson:'Valid JSON', invalidJson:'JSON error', clear:'Clear', generate:'Generate', regenerate:'Regenerate', now:'Now', parse:'Parse', test:'Test', replace:'Replace', calculate:'Calculate', file:'File', selectFile:'Choose file', processing:'Processing…',
+        categoryEncode:'Encode', categoryData:'Data', categoryTime:'Time', categorySecurity:'Security', categoryText:'Text', categoryWeb:'Web', categoryGenerate:'Generate', categoryDeveloper:'Developer',
+        base64Title:'Base64', base64Desc:'Convert UTF-8 text and Base64', base64UrlSafe:'URL-safe output', base64Invalid:'Could not decode as Base64',
+        urlCodecTitle:'URL Encode / Decode', urlCodecDesc:'Convert URI component escaping', componentMode:'URIComponent', fullUrlMode:'Full URI', invalidEncoding:'Contains invalid percent escapes',
+        entityTitle:'HTML Entity', entityDesc:'Encode and decode HTML special characters',
+        jsonTitle:'JSON', jsonDesc:'Format, minify, validate, and sort keys', jsonInputHint:'JSON text', jsonOutputHint:'Result',
+        timestampTitle:'UNIX Timestamp', timestampDesc:'Convert seconds, milliseconds, and dates', timestampValue:'Timestamp / date', timestampHint:'10/13 digits, ISO 8601, or date text', localTime:'Local', utcTime:'UTC', iso8601:'ISO 8601', unixSeconds:'UNIX seconds', unixMilliseconds:'UNIX milliseconds', relative:'Relative', invalidDate:'Could not parse as a date',
+        jwtTitle:'JWT Decoder', jwtDesc:'Inspect header, payload, and time claims', jwtToken:'JWT', jwtWarning:'Decode only. This does not verify the signature.', jwtInvalid:'Could not decode as JWT', header:'Header', payload:'Payload', signature:'Signature', expired:'Expired', active:'Within lifetime', notYetValid:'Not active yet',
+        cronTitle:'Cron', cronDesc:'Inspect 5-field cron and next runs', cronExpression:'Cron expression', cronHint:'minute hour day month weekday', cronTimezone:'Calculation timezone', cronNext:'Next 5 runs', cronInvalid:'Could not parse cron expression', cronEveryMinute:'Every minute', cronEveryNMinutes:'Every {n} minutes', cronDaily:'Every day at {time}', cronHourly:'Every hour at minute {minute}', cronGeneric:'5-field cron',
+        regexTitle:'Regex Tester', regexDesc:'Inspect matches, groups, and replacement', pattern:'Pattern', flags:'Flags', testText:'Test text', replacement:'Replacement', matches:'Matches', noMatches:'No matches', regexInvalid:'Regex error', tooManyMatches:'Showing the first 1000 matches only',
+        hashTitle:'Hash', hashDesc:'Calculate SHA-1 / SHA-2 in the browser', hashAlgorithm:'Algorithm', hashText:'Text', hashFileHint:'The selected file never leaves this browser', hashEmpty:'Enter text or choose a file', hashUnavailable:'Web Crypto API is unavailable in this context', fileName:'File name', fileSize:'Size',
+        uuidTitle:'UUID v4', uuidDesc:'Secure IDs with crypto.randomUUID', uuidCount:'Count', uuidFallback:'Generated from cryptographic random values',
+        randomTitle:'Random String', randomDesc:'Generate by length and character sets', length:'Length', uppercase:'A-Z', lowercase:'a-z', numbers:'0-9', symbols:'Symbols', randomInvalid:'Select at least one character set',
+        urlParserTitle:'URL Parser', urlParserDesc:'Split URL parts and query parameters', urlValue:'URL', urlExample:'https://example.com:8080/path?a=1#section', protocol:'Protocol', hostname:'Hostname', port:'Port', pathname:'Pathname', hashFragment:'Hash', origin:'Origin', query:'Query parameters', invalidUrl:'Could not parse as URL',
+        numberTitle:'Number Base', numberDesc:'Convert binary, octal, decimal, and hex', sourceBase:'Input base', auto:'Auto', decimal:'Decimal', hexadecimal:'Hex', binary:'Binary', octal:'Octal', integerOnly:'Enter an integer',
+        caseTitle:'Case Converter', caseDesc:'Convert to camel, snake, kebab, and more', sourceText:'Source text', camelCase:'camelCase', pascalCase:'PascalCase', snakeCase:'snake_case', kebabCase:'kebab-case', constantCase:'CONSTANT_CASE', titleCase:'Title Case',
+        textTitle:'Text Inspector', textDesc:'Count characters, UTF-8 bytes, and lines', characters:'Characters', utf8Bytes:'UTF-8 bytes', utf16Units:'UTF-16 units', words:'Words', lines:'Lines', trim:'Trim', dedupe:'Dedupe lines', sortLines:'Sort lines',
+        detectedJson:'Detected JSON', detectedJwt:'Looks like JWT', detectedUrl:'Detected URL', detectedTimestamp:'Looks like timestamp', detectedBase64:'Looks like Base64', inspectText:'Inspect text',
+        helpTitle:'How to use & notes', helpBasicsTitle:'Basics', helpStep1:'Paste a value into Smart Input to detect its format and get suggested tools.', helpStep2:'Use the sidebar on desktop or the Tools button on mobile. Ctrl/⌘ + K opens the search palette; use ↑↓ and Enter to choose.', helpStep3:'Star tools to also show them in Favorites at the top. They stay in their original categories too.', helpPrivacyTitle:'Privacy', helpPrivacyBody:'All input, conversion, and analysis stays in this browser. Tool input is kept in memory only for the lifetime of this tab and is not written to localStorage. Only language and favorite tool IDs are persisted.', helpNotesTitle:'Notes', helpNoteJwt:'JWT only decodes Header/Payload. It does not verify the signature.', helpNoteCron:'Cron supports common 5-field syntax. Next runs are calculated in the device local timezone and may differ from a specific cron implementation.', helpNoteRegex:'Regex uses the browser JavaScript RegExp engine. Some patterns can take a long time to evaluate.', helpNoteHash:'File hashing reads the full file into browser memory. Very large files can put pressure on device memory.', helpOffline:'Runtime connections are blocked by CSP. Both normal and gzip self-extracting releases work as local single HTML files.',
+        buildInfo:'Build information', appVersion:'App version', builtAt:'Built at', dependencies:'Embedded dependencies', footer:'local-first developer toolbox'
+      }
+    };
+
+    const icons = {
+      base64:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M7 7H5a3 3 0 0 0-3 3v4a3 3 0 0 0 3 3h2M17 7h2a3 3 0 0 1 3 3v4a3 3 0 0 1-3 3h-2M8 12h8"/></svg>',
+      code:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 5-6 7 6 7M16 5l6 7-6 7M14 3l-4 18"/></svg>',
+      braces:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 4H7a2 2 0 0 0-2 2v3c0 1.7-1 3-3 3 2 0 3 1.3 3 3v3a2 2 0 0 0 2 2h2M15 4h2a2 2 0 0 1 2 2v3c0 1.7 1 3 3 3-2 0-3 1.3-3 3v3a2 2 0 0 1-2 2h-2"/></svg>',
+      clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+      key:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="5"/><path d="m12 11 8-8m-3 3 3 3m-6 0 3 3"/></svg>',
+      calendar:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></svg>',
+      regex:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h8M8 4v6M16 6v12M13 9l6 6m0-6-6 6"/></svg>',
+      hash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 3 7 21M17 3l-2 18M4 9h16M3 15h16"/></svg>',
+      uuid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h4m2 0h4M7 13h2m2 0h6M7 16h7"/></svg>',
+      dice:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/></svg>',
+      link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.5.5l2-2a5 5 0 0 0-7-7l-1.2 1.2M14 11a5 5 0 0 0-7.5-.5l-2 2a5 5 0 0 0 7 7l1.2-1.2"/></svg>',
+      number:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 4v16M18 4v16M3 9h18M3 15h18"/></svg>',
+      text:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M9 6v13m6-13v13M6 19h12"/></svg>',
+      inspect:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 5h16M4 10h10M4 15h8M4 20h5"/><circle cx="17" cy="16" r="3"/><path d="m19.5 18.5 2 2"/></svg>',
+      entity:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m9 6-6 6 6 6M15 6l6 6-6 6M13 4l-2 16"/></svg>',
+      star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg>',
+      copy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>',
+      send:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h13"/><path d="m13 7 5 5-5 5"/><path d="M18 5h2v14h-2"/></svg>',
+      swap:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13"/><path d="m14 4 3 3-3 3"/><path d="M20 17H7"/><path d="m10 14-3 3 3 3"/></svg>',
+      unicode:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 6v7a4 4 0 0 0 8 0V6"/><path d="M17 8h4m-2-2v4"/></svg>',
+      hex:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 4 5 20M16 4l-3 16M4 9h16M3 15h16"/></svg>',
+      datauri:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/><path d="m8 15 2-2 2 2 4-4"/></svg>',
+      yaml:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="m6 5 3 5v9m9-14-3 5v9m-5-6h4"/></svg>',
+      csv:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16M15 4v16"/></svg>',
+      diff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5H5v3"/><path d="M5 8c2-2 5-3 8-3 2.5 0 4.8.8 6.7 2.3"/><path d="M16 19h3v-3"/><path d="M19 16c-2 2-5 3-8 3-2.5 0-4.8-.8-6.7-2.3"/></svg>',
+      path:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2"/><path d="M7 6h10M6.7 7.5 10.8 16M17.3 7.5 13.2 16"/></svg>',
+      escape:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4 4 12l4 8"/><path d="M20 4 10 20"/></svg>',
+      iso:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4m8-4v4M3 10h18"/><path d="M12 13v3l2 1"/></svg>',
+      hmac:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V8a5 5 0 1 1 10 0v3"/><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M12 15v2"/></svg>',
+      http:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M7 4v16M17 4v16"/></svg>',
+      cidr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="5" rx="1.5"/><rect x="14" y="5" width="7" height="5" rx="1.5"/><rect x="8.5" y="14" width="7" height="5" rx="1.5"/><path d="M10 7.5h4M7 10v2m10-2v2M12 12v2"/></svg>',
+      color:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c4 5 7 8 7 11.5A7 7 0 1 1 5 14.5C5 11 8 8 12 3Z"/></svg>',
+      ruler:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14 4 6 6-10 10H4v-6Z"/><path d="m12 6 6 6M9 9l2 2M6 12l2 2"/></svg>',
+      css:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h14l-1.5 15L12 21l-5.5-3L5 3Z"/><path d="M8 7h8M8.5 11H16l-.5 5-3.5 1-3.5-1-.2-2"/></svg>'
+    };
+
+    const storageKeys = { language:`${APP_CONFIG.slug}:language`, favorites:`${APP_CONFIG.slug}:favorites` };
+    const legacyStoragePrefix = 'htmlapps-dev-kitty';
+    const $ = selector => document.querySelector(selector);
+    const $$ = selector => [...document.querySelectorAll(selector)];
+    migrateLegacyStorage();
+    let language = readStorage(storageKeys.language) || detectLanguage();
+    let favorites = readJson(storageKeys.favorites, []);
+    try { localStorage.removeItem(`${APP_CONFIG.slug}:recent`); localStorage.removeItem(`${legacyStoragePrefix}:recent`); } catch (_) {}
+    let currentToolId = 'base64';
+    let pendingSeed = null;
+    let toastTimer = 0;
+    const toolSessionState = new Map();
+    const keyboardSelection = new Map([['toolList',-1],['pickerList',-1]]);
+    let pickerMode = 'open';
+    let transferGetter = null;
+
+    function t(key, vars={}) { let s=translations[language]?.[key] ?? translations.en[key] ?? key; Object.entries(vars).forEach(([k,v])=>{ s=s.replaceAll(`{${k}}`,String(v)); }); return s; }
+    function readStorage(key) { try { return localStorage.getItem(key); } catch { return null; } }
+    function writeStorage(key,value) { try { localStorage.setItem(key,value); } catch { /* private context */ } }
+    function migrateLegacyStorage() { for (const suffix of ['language','favorites']) { const currentKey=`${APP_CONFIG.slug}:${suffix}`, legacyKey=`${legacyStoragePrefix}:${suffix}`; if(readStorage(currentKey)!==null) continue; const legacyValue=readStorage(legacyKey); if(legacyValue!==null) writeStorage(currentKey,legacyValue); } }
+    function readJson(key,fallback) { try { const raw=readStorage(key); return raw ? JSON.parse(raw) : fallback; } catch { return fallback; } }
+    function detectLanguage() { if(APP_CONFIG.defaultLanguage==='ja'||APP_CONFIG.defaultLanguage==='en') return APP_CONFIG.defaultLanguage; return (navigator.language||'').toLowerCase().startsWith('ja')?'ja':'en'; }
+    function escapeHtml(value) { return String(value).replace(/[&<>"']/g,ch=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch])); }
+    function formatNumber(n) { return new Intl.NumberFormat(language).format(n); }
+    function showToast(message) { const toast=$('#toast'); toast.textContent=message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),1600); }
+    async function copyText(text) { try { await navigator.clipboard.writeText(text); showToast(t('copied')); } catch { const area=document.createElement('textarea'); area.value=text; area.style.position='fixed'; area.style.opacity='0'; document.body.append(area); area.select(); const ok=document.execCommand('copy'); area.remove(); showToast(t(ok?'copied':'copyFailed')); } }
+    function debounce(fn,delay=180){ let timer=0; return (...args)=>{clearTimeout(timer);timer=setTimeout(()=>fn(...args),delay);}; }
+    function normalizedResult(getter){ const value=String(getter?.() ?? ''); return value==='—' ? '' : value; }
+    function outputActionButtons({swap=false,send=true}={}) { return `<div class="result-actions">${swap?`<button class="copy-link" type="button" data-swap-target="dynamic">${icons.swap}<span>${t('swap')}</span></button>`:''}<button class="copy-link" type="button" data-copy-target="dynamic">${icons.copy}<span>${t('copy')}</span></button>${send?`<button class="copy-link" type="button" data-send-target="dynamic">${icons.send}<span>${t('sendToTool')}</span></button>`:''}</div>`; }
+    function setupCopyButton(getter,swapper=null) { const copy=$('[data-copy-target="dynamic"]'); if(copy) copy.addEventListener('click',()=>copyText(normalizedResult(getter))); const send=$('[data-send-target="dynamic"]'); if(send) send.addEventListener('click',()=>openTransferPicker(()=>normalizedResult(getter))); const swap=$('[data-swap-target="dynamic"]'); if(swap&&swapper) swap.addEventListener('click',swapper); }
+    function copyResultHeader(label=t('result'),options={}) { return `<div class="result-head"><strong>${escapeHtml(label)}</strong>${outputActionButtons(options)}</div>`; }
+    function swapInputOutput(input,output){ const result=normalizedResult(()=>output.textContent); if(!result){showToast(t('emptyResult'));return;} const before=input.value; input.value=result; output.textContent=before||'—'; output.classList.toggle('empty',!before); }
+    function formatBytes(bytes) { if(bytes<1024) return `${bytes} B`; const units=['KB','MB','GB','TB']; let v=bytes/1024,i=0; while(v>=1024&&i<units.length-1){v/=1024;i++;} return `${v.toFixed(v>=10?1:2)} ${units[i]}`; }
+    function localDateTime(date) { return new Intl.DateTimeFormat(language==='ja'?'ja-JP':'en-US',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZoneName:'short'}).format(date); }
+    function relativeTime(date) { const diff=date.getTime()-Date.now(); const abs=Math.abs(diff); let unit='second',value=Math.round(diff/1000); if(abs>=86400000){unit='day';value=Math.round(diff/86400000);} else if(abs>=3600000){unit='hour';value=Math.round(diff/3600000);} else if(abs>=60000){unit='minute';value=Math.round(diff/60000);} return new Intl.RelativeTimeFormat(language,{numeric:'auto'}).format(value,unit); }
+
+    const AppConfirm = (() => {
+      const dialog=$('#appConfirmDialog'), title=$('#appConfirmTitle'), message=$('#appConfirmMessage'), close=$('#appConfirmClose'), cancel=$('#appConfirmCancel'), ok=$('#appConfirmOk');
+      let resolver=null, restoreFocus=null;
+      function finish(result){ if(!dialog.open)return; const r=resolver; resolver=null; dialog.close(); if(restoreFocus instanceof HTMLElement&&restoreFocus.isConnected) restoreFocus.focus({preventScroll:true}); restoreFocus=null; if(r)r(result); }
+      function ask({title:heading,message:body,confirmLabel,cancelLabel,tone='default'}={}){ if(dialog.open)finish(false); title.textContent=heading||''; message.textContent=body||''; cancel.textContent=cancelLabel||t('cancel'); ok.textContent=confirmLabel||'OK'; ok.classList.toggle('danger',tone==='danger'); ok.classList.toggle('primary',tone!=='danger'); restoreFocus=document.activeElement; return new Promise(resolve=>{resolver=resolve;dialog.showModal();requestAnimationFrame(()=>cancel.focus({preventScroll:true}));}); }
+      close.addEventListener('click',()=>finish(false)); cancel.addEventListener('click',()=>finish(false)); ok.addEventListener('click',()=>finish(true)); dialog.addEventListener('cancel',e=>{e.preventDefault();finish(false);}); dialog.addEventListener('click',e=>{const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)finish(false);});
+      return Object.freeze({ask});
+    })();
+    window.AppConfirm = AppConfirm;
+
+    function utf8ToBase64(text) { const bytes=new TextEncoder().encode(text); let binary=''; const chunk=0x8000; for(let i=0;i<bytes.length;i+=chunk) binary+=String.fromCharCode(...bytes.subarray(i,i+chunk)); return btoa(binary); }
+    function base64ToUtf8(value) { let clean=value.trim().replace(/\s+/g,'').replace(/-/g,'+').replace(/_/g,'/'); while(clean.length%4) clean+='='; const binary=atob(clean); const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0)); return new TextDecoder('utf-8',{fatal:true}).decode(bytes); }
+    function isLikelyBase64(value) { const clean=value.trim().replace(/\s+/g,''); if(clean.length<8||clean.length%4===1||!/^[A-Za-z0-9+/_-]+={0,2}$/.test(clean)) return false; try { const decoded=base64ToUtf8(clean); if(!decoded) return false; const printable=[...decoded].filter(ch=>{const c=ch.codePointAt(0);return c===9||c===10||c===13||c>=32;}).length; return printable/[...decoded].length>.85; } catch { return false; } }
+    function decodeJwtPart(part) { return JSON.parse(base64ToUtf8(part)); }
+    function safeJson(value) { return JSON.stringify(value,null,2); }
+    function sortJson(value) { if(Array.isArray(value)) return value.map(sortJson); if(value&&typeof value==='object') return Object.fromEntries(Object.keys(value).sort((a,b)=>a.localeCompare(b)).map(k=>[k,sortJson(value[k])])); return value; }
+
+    function parseDateInput(value) {
+      const raw=value.trim();
+      if(!raw) return null;
+      if(/^[-+]?\d{10}$/.test(raw)) return new Date(Number(raw)*1000);
+      if(/^[-+]?\d{13}$/.test(raw)) return new Date(Number(raw));
+      if(/^[-+]?\d{11,12}$/.test(raw)) { const n=Number(raw); return new Date(n>1e11?n:n*1000); }
+      const parsed=new Date(raw); return Number.isNaN(parsed.getTime())?null:parsed;
+    }
+
+    function parseCronField(raw,min,max,{aliases={},dow=false}={}) {
+      const result=new Set();
+      const source=raw.toLowerCase();
+      const normalizeToken=token => Object.hasOwn(aliases,token)?String(aliases[token]):token;
+      const addRange=(start,end,step=1)=>{ if(!Number.isInteger(start)||!Number.isInteger(end)||step<1||start<min||end>max||start>end) throw new Error('range'); for(let n=start;n<=end;n+=step) result.add(dow&&n===7?0:n); };
+      for(const part of source.split(',')) {
+        if(!part) throw new Error('empty');
+        const [base,stepRaw]=part.split('/'); if(part.split('/').length>2) throw new Error('step');
+        const step=stepRaw===undefined?1:Number(stepRaw); if(!Number.isInteger(step)||step<1) throw new Error('step');
+        if(base==='*') { addRange(min,max,step); continue; }
+        if(base.includes('-')) { const pieces=base.split('-'); if(pieces.length!==2) throw new Error('range'); addRange(Number(normalizeToken(pieces[0])),Number(normalizeToken(pieces[1])),step); continue; }
+        if(stepRaw!==undefined) { const start=Number(normalizeToken(base)); addRange(start,max,step); continue; }
+        const n=Number(normalizeToken(base)); if(!Number.isInteger(n)||n<min||n>max) throw new Error('value'); result.add(dow&&n===7?0:n);
+      }
+      return result;
+    }
+    function parseCron(expr) {
+      const parts=expr.trim().split(/\s+/); if(parts.length!==5) throw new Error('fields');
+      const months={jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
+      const days={sun:0,mon:1,tue:2,wed:3,thu:4,fri:5,sat:6};
+      return { raw:parts, minute:parseCronField(parts[0],0,59), hour:parseCronField(parts[1],0,23), dom:parseCronField(parts[2],1,31), month:parseCronField(parts[3],1,12,{aliases:months}), dow:parseCronField(parts[4],0,7,{aliases:days,dow:true}), domAny:parts[2]==='*', dowAny:parts[4]==='*' };
+    }
+    function cronMatches(spec,date) {
+      if(!spec.minute.has(date.getMinutes())||!spec.hour.has(date.getHours())||!spec.month.has(date.getMonth()+1)) return false;
+      const dom=spec.dom.has(date.getDate()), dow=spec.dow.has(date.getDay());
+      const dayOk=spec.domAny&&spec.dowAny ? true : spec.domAny ? dow : spec.dowAny ? dom : (dom||dow);
+      return dayOk;
+    }
+    function nextCronRuns(spec,count=5) {
+      const out=[]; const d=new Date(); d.setSeconds(0,0); d.setMinutes(d.getMinutes()+1); const limit=60*24*366*2;
+      for(let i=0;i<limit&&out.length<count;i+=1) { if(cronMatches(spec,d)) out.push(new Date(d)); d.setMinutes(d.getMinutes()+1); }
+      return out;
+    }
+    function describeCron(expr) { const p=expr.trim().split(/\s+/); if(expr.trim()==='* * * * *') return t('cronEveryMinute'); if(/^\*\/\d+ \* \* \* \*$/.test(expr.trim())) return t('cronEveryNMinutes',{n:p[0].slice(2)}); if(/^\d+ \* \* \* \*$/.test(expr.trim())) return t('cronHourly',{minute:p[0]}); if(/^\d+ \d+ \* \* \*$/.test(expr.trim())) return t('cronDaily',{time:`${String(p[1]).padStart(2,'0')}:${String(p[0]).padStart(2,'0')}`}); return t('cronGeneric'); }
+
+    function splitWords(value) { return value.trim().replace(/([a-z0-9])([A-Z])/g,'$1 $2').replace(/([A-Z]+)([A-Z][a-z])/g,'$1 $2').split(/[^\p{L}\p{N}]+/u).filter(Boolean).map(w=>w.toLocaleLowerCase(language==='ja'?'ja':'en')); }
+    function capitalize(w){ return w? w[0].toLocaleUpperCase()+w.slice(1):w; }
+
+    function randomString(length,alphabet) { if(!alphabet) throw new Error('alphabet'); const out=[]; const max=Math.floor(256/alphabet.length)*alphabet.length; const buf=new Uint8Array(Math.max(32,Math.ceil(length*1.5))); while(out.length<length){crypto.getRandomValues(buf);for(const b of buf){if(b<max){out.push(alphabet[b%alphabet.length]);if(out.length===length)break;}}} return out.join(''); }
+    function uuidV4() { if(crypto.randomUUID) return crypto.randomUUID(); const b=new Uint8Array(16);crypto.getRandomValues(b);b[6]=(b[6]&15)|64;b[8]=(b[8]&63)|128;const h=[...b].map(x=>x.toString(16).padStart(2,'0')).join('');return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`; }
+
+
+    const tools = [
+      { id:'base64', category:'categoryEncode', icon:'base64', title:'Base64', desc:'Base64 encode and decode for UTF-8 text', descJa:'UTF-8テキストをBase64へエンコード・デコード', keywords:'base64 b64 encode decode utf8', render:renderBase64 },
+      { id:'url-codec', category:'categoryEncode', icon:'link', title:'URL', desc:'Encode and decode URI and URL components', descJa:'URL・URIコンポーネントをエンコード・デコード', keywords:'url uri encode decode percent component', render:renderUrlCodec },
+      { id:'html-entity', category:'categoryEncode', icon:'entity', title:'HTML Entity', desc:'Escape and unescape HTML special characters', descJa:'HTML特殊文字をエスケープ・復元', keywords:'html entity escape unescape amp lt gt', render:renderEntity },
+      { id:'unicode', category:'categoryEncode', icon:'unicode', title:'Unicode', desc:'Escape and unescape Unicode sequences', descJa:'Unicodeエスケープ表記へ変換・復元', keywords:'unicode escape unescape uplus codepoint', render:renderUnicode },
+      { id:'hex', category:'categoryEncode', icon:'hex', title:'Hex', desc:'Convert text and hexadecimal bytes', descJa:'テキストと16進バイト列を相互変換', keywords:'hex bytes text encode decode', render:renderHex },
+      { id:'data-uri', category:'categoryEncode', icon:'datauri', title:'Data URI', desc:'Create and inspect data: URIs', descJa:'Data URIを生成・解析', keywords:'data uri dataurl base64 mime', render:renderDataUri },
+
+      { id:'json', category:'categoryData', icon:'braces', title:'JSON', desc:'Format, minify, validate, and sort keys', descJa:'整形・圧縮・検証・キーソート', keywords:'json pretty format minify validate sort', render:renderJson },
+      { id:'yaml', category:'categoryData', icon:'yaml', title:'YAML', desc:'Convert between JSON and simple YAML', descJa:'JSONとシンプルなYAMLを相互変換', keywords:'yaml yml json convert', render:renderYaml },
+      { id:'csv', category:'categoryData', icon:'csv', title:'CSV', desc:'Convert CSV and JSON tables', descJa:'CSVとJSONテーブルを相互変換', keywords:'csv json table parse stringify', render:renderCsv },
+      { id:'json-diff', category:'categoryData', icon:'diff', title:'JSON Diff', desc:'Compare two JSON values by path', descJa:'2つのJSONをパス単位で比較', keywords:'json diff compare patch', render:renderJsonDiff },
+      { id:'jsonpath', category:'categoryData', icon:'path', title:'JSONPath', desc:'Query JSON with a lightweight JSONPath subset', descJa:'JSONPathでJSONから値を抽出', keywords:'jsonpath json path query $.', render:renderJsonPath },
+
+      { id:'case', category:'categoryText', icon:'text', title:'Case Converter', desc:'Convert text to camel, snake, kebab, and more', descJa:'camel・snake・kebabなどへ一括変換', keywords:'case camel pascal snake kebab constant title', render:renderCase },
+      { id:'sort-lines', category:'categoryText', icon:'text', title:'Sort Lines', desc:'Sort lines alphabetically', descJa:'行を文字順に並べ替え', keywords:'sort lines text alphabetical', render:renderSortLines },
+      { id:'deduplicate', category:'categoryText', icon:'inspect', title:'Deduplicate', desc:'Remove duplicate lines while preserving order', descJa:'元の順序を保ったまま重複行を削除', keywords:'deduplicate uniq remove duplicate lines', render:renderDeduplicate },
+      { id:'text', category:'categoryText', icon:'inspect', title:'Character / Byte Count', desc:'Count characters, bytes, words, and lines', descJa:'文字数・UTF-8バイト数・単語数・行数を確認', keywords:'text count bytes utf8 length lines words', render:renderText },
+      { id:'escape', category:'categoryText', icon:'escape', title:'Escape', desc:'Escape and unescape strings and regex text', descJa:'文字列や正規表現向けにエスケープ・復元', keywords:'escape unescape json js regex string', render:renderEscape },
+
+      { id:'timestamp', category:'categoryTime', icon:'clock', title:'UNIX Timestamp', desc:'Convert seconds, milliseconds, and dates', descJa:'秒・ミリ秒・日時を相互変換', keywords:'unix timestamp epoch date time iso', render:renderTimestamp },
+      { id:'iso8601', category:'categoryTime', icon:'iso', title:'ISO 8601', desc:'Normalize and inspect ISO 8601 datetimes', descJa:'ISO 8601日時を正規化・確認', keywords:'iso 8601 datetime date time', render:renderIso8601 },
+      { id:'date-diff', category:'categoryTime', icon:'calendar', title:'Date Difference', desc:'Calculate the difference between two dates', descJa:'2つの日時の差分を計算', keywords:'date difference duration between time', render:renderDateDiff },
+      { id:'cron', category:'categoryTime', icon:'calendar', title:'Cron', desc:'Inspect 5-field cron and next runs', descJa:'5フィールドCron式と次回実行日時を確認', keywords:'cron crontab schedule next run', render:renderCron },
+
+      { id:'jwt', category:'categorySecurity', icon:'key', title:'JWT Decoder', desc:'Inspect header, payload, and time claims', descJa:'Header・Payload・時刻claimを確認', keywords:'jwt token header payload claims exp iat nbf', render:renderJwt },
+      { id:'hash', category:'categorySecurity', icon:'hash', title:'Hash', desc:'Calculate SHA-1 and SHA-2 in the browser', descJa:'SHA-1・SHA-2ハッシュをブラウザー内で計算', keywords:'hash sha sha1 sha256 sha384 sha512 checksum file', render:renderHash },
+      { id:'hmac', category:'categorySecurity', icon:'hmac', title:'HMAC', desc:'Calculate HMAC using a secret key', descJa:'秘密鍵を使ってHMACを計算', keywords:'hmac sha256 sha512 sign secret key', render:renderHmac },
+      { id:'random', category:'categorySecurity', icon:'dice', title:'Random Generator', desc:'Generate secure random strings', descJa:'暗号学的乱数でランダム文字列を生成', keywords:'random string password token chars secure', render:renderRandom },
+
+      { id:'regex', category:'categoryDeveloper', icon:'regex', title:'Regex', desc:'Inspect matches, groups, and replacement', descJa:'正規表現のマッチ・グループ・置換を確認', keywords:'regex regexp regular expression replace match', render:renderRegex },
+      { id:'uuid', category:'categoryDeveloper', icon:'uuid', title:'UUID', desc:'Generate UUID v4 values', descJa:'UUID v4を安全に生成', keywords:'uuid guid random id v4', render:renderUuid },
+      { id:'url-parser', category:'categoryDeveloper', icon:'link', title:'URL Parser', desc:'Split URL parts and query parameters', descJa:'URLを構成要素とQuery Parameterへ分解', keywords:'url parse query params hostname pathname origin', render:renderUrlParser },
+      { id:'http-status', category:'categoryDeveloper', icon:'http', title:'HTTP Status', desc:'Look up common HTTP status codes', descJa:'HTTPステータスコードと名称を検索', keywords:'http status code 200 404 500', render:renderHttpStatus },
+      { id:'number-base', category:'categoryDeveloper', icon:'number', title:'Number Base', desc:'Convert binary, octal, decimal, and hex', descJa:'2・8・10・16進数を相互変換', keywords:'binary hex decimal octal base radix number', render:renderNumberBase },
+      { id:'cidr', category:'categoryDeveloper', icon:'cidr', title:'CIDR', desc:'Calculate IPv4 network ranges from CIDR', descJa:'IPv4 CIDRからネットワーク範囲を計算', keywords:'cidr subnet ipv4 network broadcast range', render:renderCidr },
+
+      { id:'color', category:'categoryWeb', icon:'color', title:'Color Converter', desc:'Convert HEX, RGB, and HSL', descJa:'HEX・RGB・HSLカラーを相互変換', keywords:'color hex rgb hsl css', render:renderColor },
+      { id:'px-rem', category:'categoryWeb', icon:'ruler', title:'px / rem', desc:'Convert px and rem with a custom base size', descJa:'基準フォントサイズを指定してpxとremを相互変換', keywords:'px rem em css size', render:renderPxRem },
+      { id:'css-tools', category:'categoryWeb', icon:'css', title:'CSS Tools', desc:'Preview box-shadow and border-radius values', descJa:'box-shadow・border-radiusをプレビュー', keywords:'css box shadow border radius preview', render:renderCssTools }
+    ];
+    const toolMap = Object.fromEntries(tools.map(tool=>[tool.id,tool]));
+
+    function toolDescription(tool) { return language==='ja' ? (tool.descJa || tool.desc) : tool.desc; }
+
+    const toolAliases = {
+      'base64':{ja:'ベース64 エンコード デコード 変換',en:'base 64 encoder decoder'},
+      'url-codec':{ja:'URLエンコード URLデコード パーセントエンコード URI',en:'percent encoding url encoder decoder'},
+      'html-entity':{ja:'HTMLエンティティ 特殊文字 エスケープ',en:'html entities special characters'},
+      'unicode':{ja:'ユニコード コードポイント 文字コード',en:'unicode code point'},
+      'hex':{ja:'16進数 十六進 バイト列',en:'hexadecimal bytes'},
+      'data-uri':{ja:'データURI DataURL 埋め込み',en:'data url datauri embedded'},
+      'json':{ja:'ジェイソン 整形 圧縮 検証 フォーマット',en:'pretty print formatter validator'},
+      'yaml':{ja:'ヤムル YML 変換',en:'yml converter'},
+      'csv':{ja:'カンマ区切り 表 テーブル',en:'comma separated table'},
+      'json-diff':{ja:'JSON差分 比較 変更点',en:'json compare difference'},
+      'jsonpath':{ja:'JSONパス 抽出 検索',en:'json query extract path'},
+      'case':{ja:'大文字 小文字 キャメル スネーク ケバブ ケース変換',en:'camel snake kebab pascal case'},
+      'sort-lines':{ja:'行ソート 並べ替え 文字順',en:'sort text lines alphabetical'},
+      'deduplicate':{ja:'重複削除 ユニーク 同じ行',en:'unique duplicate lines'},
+      'text':{ja:'文字数 バイト数 行数 単語数 カウント',en:'character byte line word count'},
+      'escape':{ja:'エスケープ アンエスケープ 文字列',en:'escape unescape string'},
+      'timestamp':{ja:'UNIX時間 エポック 時刻 日時 タイムスタンプ',en:'epoch unix time datetime'},
+      'iso8601':{ja:'ISO日時 日付 時刻',en:'iso date datetime'},
+      'date-diff':{ja:'日時差 日数 差分 期間',en:'date difference duration days'},
+      'cron':{ja:'クロン スケジュール 定期実行',en:'crontab schedule recurring'},
+      'jwt':{ja:'JWTデコード トークン ペイロード クレーム',en:'token decoder payload claims'},
+      'hash':{ja:'ハッシュ チェックサム SHA',en:'checksum digest sha'},
+      'hmac':{ja:'HMAC 署名 秘密鍵 MAC',en:'message authentication signature secret'},
+      'random':{ja:'乱数 ランダム文字列 トークン',en:'random secure token string'},
+      'regex':{ja:'正規表現 レジェックス マッチ 置換',en:'regular expression regexp match replace'},
+      'uuid':{ja:'UUID GUID 識別子 ID生成',en:'guid identifier id generator'},
+      'url-parser':{ja:'URL解析 クエリ パラメータ ホスト パス',en:'url analyzer query params host path'},
+      'http-status':{ja:'HTTPステータス 状態コード 404 500',en:'http code status lookup'},
+      'number-base':{ja:'進数 2進数 8進数 10進数 16進数 基数',en:'binary octal decimal hexadecimal radix'},
+      'cidr':{ja:'IP サブネット ネットワーク マスク IPv4',en:'subnet ip network mask ipv4'},
+      'color':{ja:'色 カラー RGB HSL HEX CSS色',en:'colour rgb hsl hex'},
+      'px-rem':{ja:'ピクセル rem フォントサイズ CSS単位',en:'pixels rem font size units'},
+      'css-tools':{ja:'CSS シャドウ 影 角丸 border-radius box-shadow',en:'css shadow radius box shadow'}
+    };
+    function toolAliasText(tool){ const aliases=toolAliases[tool.id]||{}; return `${aliases.ja||''} ${aliases.en||''}`; }
+    function toolSearchScore(tool,query){ const q=query.trim().toLowerCase(); if(!q)return 0; const title=t(tool.title).toLowerCase(),id=tool.id.toLowerCase(),aliases=toolAliasText(tool).toLowerCase(),keywords=tool.keywords.toLowerCase(),descriptions=`${toolDescription(tool)} ${tool.desc} ${tool.descJa||''}`.toLowerCase(); if(title===q||id===q)return 0; if(title.startsWith(q)||id.startsWith(q))return 1; if(aliases.split(/\s+/).includes(q))return 1; if(aliases.includes(q))return 2; if(keywords.includes(q))return 3; if(title.includes(q)||id.includes(q))return 3; if(descriptions.includes(q))return 5; return Infinity; }
+    function toolSearchMatch(tool,query) { return Number.isFinite(toolSearchScore(tool,query)); }
+    function starSvg(filled=false) { return `<svg viewBox="0 0 24 24" ${filled?'fill="currentColor"':'fill="none"'} stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg>`; }
+    function toolRow(tool) { const fav=favorites.includes(tool.id); return `<div class="tool-row${tool.id===currentToolId?' active':''}" data-open-tool="${tool.id}" role="button" tabindex="0" aria-current="${tool.id===currentToolId?'true':'false'}"><span class="tool-row-icon">${icons[tool.icon]}</span><span class="tool-row-copy"><span class="tool-row-title">${escapeHtml(t(tool.title))}</span><span class="tool-row-desc">${escapeHtml(toolDescription(tool))}</span></span><button class="star-button${fav?' active':''}" type="button" data-favorite-tool="${tool.id}" aria-label="${escapeHtml(t('favorite'))}" aria-pressed="${fav}">${starSvg(fav)}</button></div>`; }
+    function renderToolList(container,query='') {
+      const sourceTools=container.id==='pickerList'&&pickerMode==='transfer'?tools.filter(tool=>seedSelectors[tool.id]):tools; const matched=sourceTools.filter(tool=>toolSearchMatch(tool,query)).sort((a,b)=>toolSearchScore(a,query)-toolSearchScore(b,query)||tools.indexOf(a)-tools.indexOf(b));
+      if(!matched.length){container.innerHTML=`<div class="tool-empty">${escapeHtml(t('noTools'))}</div>`;return;}
+      const sections=[];
+      const favTools=favorites.map(id=>toolMap[id]).filter(Boolean).filter(tool=>matched.includes(tool));
+      if(favTools.length) sections.push([t('favorites'),favTools]);
+      const cats=[...new Set(matched.map(tool=>tool.category))]; cats.forEach(cat=>{const list=matched.filter(tool=>tool.category===cat);if(list.length)sections.push([t(cat),list]);});
+      container.innerHTML=sections.map(([title,list])=>`<section class="tool-section"><div class="tool-section-title">${escapeHtml(title)}</div>${list.map(toolRow).join('')}</section>`).join('');
+      container.querySelectorAll('[data-open-tool]').forEach(row=>{
+        const open=()=>{ const id=row.dataset.openTool; if(container.id==='pickerList'&&pickerMode==='transfer'){ const value=normalizedResult(transferGetter); if(!value){showToast(t('emptyResult'));return;} resetPickerMode(); openTool(id,value); } else openTool(id); }; row.addEventListener('click',e=>{if(e.target.closest('[data-favorite-tool]'))return;open();}); row.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&!e.target.closest('[data-favorite-tool]')){e.preventDefault();open();}});
+      });
+      container.querySelectorAll('[data-favorite-tool]').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();toggleFavorite(btn.dataset.favoriteTool);}));
+    }
+    function refreshToolBrowsers() { renderToolList($('#toolList'),$('#toolSearch').value); renderToolList($('#pickerList'),$('#pickerSearch').value); $('#toolCount').textContent=t('toolCount',{n:tools.length}); updateWorkspaceFavorite(); }
+    function toggleFavorite(id) { favorites=favorites.includes(id)?favorites.filter(x=>x!==id):[id,...favorites.filter(x=>x!==id)]; writeStorage(storageKeys.favorites,JSON.stringify(favorites)); refreshToolBrowsers(); }
+    function updateWorkspaceFavorite() { const btn=$('#workspaceFavorite'); const fav=favorites.includes(currentToolId); btn.classList.toggle('active',fav); btn.setAttribute('aria-pressed',String(fav)); btn.innerHTML=starSvg(fav); }
+
+    function captureWorkspaceState() { const state={}; $$('#workspaceBody input,#workspaceBody textarea,#workspaceBody select').forEach(el=>{if(!el.id||el.type==='file')return;state[el.id]=el.type==='checkbox'?el.checked:el.value;}); return state; }
+    function saveCurrentToolState(){ if(toolMap[currentToolId]) toolSessionState.set(currentToolId,captureWorkspaceState()); }
+    function restoreWorkspaceState(state) { Object.entries(state||{}).forEach(([id,value])=>{const el=document.getElementById(id);if(!el)return;if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value;}); }
+    const seedSelectors={base64:'#base64Input','url-codec':'#urlCodecInput','html-entity':'#entityInput',unicode:'#unicodeInput',hex:'#hexInput','data-uri':'#dataUriInput',json:'#jsonInput',yaml:'#yamlInput',csv:'#csvInput','json-diff':'#jsonDiffLeft',jsonpath:'#jsonPathInput',case:'#caseInput','sort-lines':'#sortLinesInput',deduplicate:'#dedupeInput',text:'#textInput',escape:'#escapeInput',timestamp:'#timestampInput',iso8601:'#isoInput','date-diff':'#dateDiffStart',cron:'#cronInput',jwt:'#jwtInput',hash:'#hashText',hmac:'#hmacInput',random:null,regex:'#regexText',uuid:null,'url-parser':'#urlParserInput','http-status':'#httpStatusInput','number-base':'#numberInput',cidr:'#cidrInput',color:'#colorInput','px-rem':'#pxValue','css-tools':'#cssShadowColor'};
+    function applyPendingSeed(toolId){ if(pendingSeed===null||pendingSeed===undefined)return; const value=String(pendingSeed); const selector=seedSelectors[toolId]; const target=selector?$(selector):$('#workspaceBody textarea,#workspaceBody input[type="text"],#workspaceBody input:not([type])'); if(target){target.value=value;target.dispatchEvent(new Event('input',{bubbles:true}));} pendingSeed=null; }
+    function renderCurrentTool(state=null) { const tool=toolMap[currentToolId]||tools[0]; const restored=state ?? toolSessionState.get(tool.id) ?? null; $('#workspaceTitle').textContent=t(tool.title); $('#workspaceDescription').textContent=toolDescription(tool); $('#workspaceIcon').innerHTML=icons[tool.icon]; $('#workspaceBody').innerHTML=tool.render(); restoreWorkspaceState(restored); applyPendingSeed(tool.id); initTool(tool.id); updateWorkspaceFavorite(); }
+    function resetPickerMode(){ pickerMode='open'; transferGetter=null; $('#toolPickerTitle').textContent=t('chooseTool'); }
+    function openToolPicker(mode='open',getter=null){ pickerMode=mode; transferGetter=getter; $('#toolPickerTitle').textContent=mode==='transfer'?t('sendResultTitle'):t('searchTools'); if(mode==='transfer')$('#pickerSearch').value=''; renderToolList($('#pickerList'),$('#pickerSearch').value); if(!$('#toolPickerDialog').open)$('#toolPickerDialog').showModal(); keyboardSelection.set('pickerList',-1); requestAnimationFrame(()=>{$('#pickerSearch').focus();$('#pickerSearch').select();}); }
+    function openTransferPicker(getter){ const value=normalizedResult(getter); if(!value){showToast(t('emptyResult'));return;} openToolPicker('transfer',getter); }
+    function setKeyboardSelection(container,index){ const rows=[...container.querySelectorAll('[data-open-tool]')]; rows.forEach(row=>row.classList.remove('keyboard-active')); if(!rows.length){keyboardSelection.set(container.id,-1);return;} const next=Math.max(0,Math.min(rows.length-1,index)); keyboardSelection.set(container.id,next); rows[next].classList.add('keyboard-active'); rows[next].scrollIntoView({block:'nearest'}); }
+    function handleSearchKeydown(event,container,search){ const rows=[...container.querySelectorAll('[data-open-tool]')]; let index=keyboardSelection.get(container.id)??-1; if(event.key==='ArrowDown'){event.preventDefault();setKeyboardSelection(container,index<0?0:index+1);} else if(event.key==='ArrowUp'){event.preventDefault();setKeyboardSelection(container,index<0?rows.length-1:index-1);} else if(event.key==='Enter'&&index>=0&&rows[index]){event.preventDefault();rows[index].click();} else if(event.key==='Escape'){if(search.value){search.value='';renderToolList(container,'');keyboardSelection.set(container.id,-1);}else if(container.id==='pickerList'&&$('#toolPickerDialog').open){$('#toolPickerDialog').close();resetPickerMode();}} }
+    function scrollToWorkspaceHeader() {
+      const workspace=$('#workspace'); if(!workspace)return;
+      const header=$('.app-header');
+      const headerHeight=header?.getBoundingClientRect().height || 66;
+      const gap=12;
+      const target=Math.max(0,window.scrollY + workspace.getBoundingClientRect().top - headerHeight - gap);
+      window.scrollTo({top:target,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    }
+    function openTool(id,seed=null) { if(!toolMap[id])id='base64'; saveCurrentToolState(); currentToolId=id; pendingSeed=seed; if(location.hash!==`#${id}`) history.pushState(null,'',`#${id}`); renderCurrentTool(); refreshToolBrowsers(); if($('#toolPickerDialog').open) $('#toolPickerDialog').close(); resetPickerMode(); requestAnimationFrame(scrollToWorkspaceHeader); }
+
+    function detectSmartInput(value) {
+      const v=value.trim(); const out=[]; if(!v)return out;
+      if(v.split('.').length===3&&/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(v)){ try{decodeJwtPart(v.split('.')[0]);decodeJwtPart(v.split('.')[1]);out.push({id:'jwt',label:'detectedJwt'});}catch{} }
+      try { JSON.parse(v); out.push({id:'json',label:'detectedJson'}); } catch {}
+      try { const u=new URL(v); if(['http:','https:','ftp:','ws:','wss:'].includes(u.protocol)) out.push({id:'url-parser',label:'detectedUrl'}); } catch {}
+      if(/^\d{10}$|^\d{13}$/.test(v) && parseDateInput(v)) out.push({id:'timestamp',label:'detectedTimestamp'});
+      if(isLikelyBase64(v)&&!out.some(x=>x.id==='jwt')) out.push({id:'base64',label:'detectedBase64'});
+      out.push({id:'text',label:'inspectText'});
+      const seen=new Set(); return out.filter(item=>!seen.has(item.id)&&seen.add(item.id));
+    }
+    function renderSmartSuggestions() { const value=$('#smartInput').value; $('#smartClear').classList.toggle('show',Boolean(value)); const suggestions=detectSmartInput(value); const box=$('#smartSuggestions'); if(!value.trim()){box.innerHTML=`<p class="smart-empty">${escapeHtml(t('smartEmpty'))}</p>`;return;} box.innerHTML=suggestions.map(item=>`<button class="suggestion" type="button" data-smart-tool="${item.id}">${icons[toolMap[item.id].icon]}<span>${escapeHtml(t(item.label))}</span></button>`).join(''); box.querySelectorAll('[data-smart-tool]').forEach(btn=>btn.addEventListener('click',()=>openTool(btn.dataset.smartTool,$('#smartInput').value))); }
+
+    function renderBase64() { return `<div class="field-grid"><div class="field full"><label for="base64Input">${t('input')}</label><textarea class="textarea code" id="base64Input" spellcheck="false"></textarea></div><div class="field full"><div class="inline-checks"><label class="check"><input id="base64UrlSafe" type="checkbox"> ${t('base64UrlSafe')}</label></div><div class="button-row"><button class="button primary" id="base64Encode" type="button">${t('encode')}</button><button class="button" id="base64Decode" type="button">${t('decode')}</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box empty" id="base64Output">—</div><div class="status-line" id="base64Status"></div></div></div>`; }
+    function initBase64(){ const input=$('#base64Input'),output=$('#base64Output'),status=$('#base64Status'); if(pendingSeed){input.value=pendingSeed;pendingSeed=null;} let action=isLikelyBase64(input.value)?'decode':'encode'; const set=v=>{output.textContent=v||'';output.classList.toggle('empty',!v);status.textContent='';status.className='status-line';}; const run=kind=>{action=kind;try{if(kind==='encode'){let v=utf8ToBase64(input.value);if($('#base64UrlSafe').checked)v=v.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');set(v);}else set(base64ToUtf8(input.value));}catch(e){set('');status.textContent=t('base64Invalid');status.className='status-line error';}}; const live=debounce(()=>run(action)); $('#base64Encode').onclick=()=>run('encode'); $('#base64Decode').onclick=()=>run('decode'); input.addEventListener('input',live); $('#base64UrlSafe').addEventListener('change',live); if(input.value)run(action); setupCopyButton(()=>output.textContent,()=>swapInputOutput(input,output)); }
+
+    function renderUrlCodec(){ return `<div class="field-grid"><div class="field full"><label for="urlCodecInput">${t('input')}</label><textarea class="textarea code" id="urlCodecInput" spellcheck="false"></textarea></div><div class="field full"><div class="segmented" role="group"><button class="segment active" id="urlModeComponent" type="button">${t('componentMode')}</button><button class="segment" id="urlModeFull" type="button">${t('fullUrlMode')}</button></div><div class="button-row"><button class="button primary" id="urlEncode" type="button">${t('encode')}</button><button class="button" id="urlDecode" type="button">${t('decode')}</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box empty" id="urlCodecOutput">—</div><div class="status-line" id="urlCodecStatus"></div></div></div>`; }
+    function initUrlCodec(){let mode='component',action=/%[0-9a-f]{2}/i.test($('#urlCodecInput')?.value||'')?'decode':'encode';const input=$('#urlCodecInput'),out=$('#urlCodecOutput'),status=$('#urlCodecStatus');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const setMode=m=>{mode=m;$('#urlModeComponent').classList.toggle('active',m==='component');$('#urlModeFull').classList.toggle('active',m==='full');live();};const run=kind=>{action=kind;try{out.textContent=kind==='encode'?(mode==='component'?encodeURIComponent(input.value):encodeURI(input.value)):(mode==='component'?decodeURIComponent(input.value):decodeURI(input.value));out.classList.toggle('empty',!out.textContent);status.textContent='';status.className='status-line';}catch{out.textContent='—';out.classList.add('empty');status.textContent=t('invalidEncoding');status.className='status-line error';}};const live=debounce(()=>run(action));$('#urlModeComponent').onclick=()=>setMode('component');$('#urlModeFull').onclick=()=>setMode('full');$('#urlEncode').onclick=()=>run('encode');$('#urlDecode').onclick=()=>run('decode');input.addEventListener('input',live);if(input.value)run(action);setupCopyButton(()=>out.textContent,()=>swapInputOutput(input,out));}
+
+    function renderEntity(){ return `<div class="field-grid"><div class="field full"><label for="entityInput">${t('input')}</label><textarea class="textarea code" id="entityInput" spellcheck="false"></textarea></div><div class="field full"><div class="button-row"><button class="button primary" id="entityEncode" type="button">${t('encode')}</button><button class="button" id="entityDecode" type="button">${t('decode')}</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box empty" id="entityOutput">—</div></div></div>`; }
+    function initEntity(){const input=$('#entityInput'),out=$('#entityOutput');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}let action=/&(?:#\d+|#x[0-9a-f]+|[a-z]+);/i.test(input.value)?'decode':'encode';const run=kind=>{action=kind;if(kind==='encode')out.textContent=input.value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');else{const ta=document.createElement('textarea');ta.innerHTML=input.value;out.textContent=ta.value;}out.classList.toggle('empty',!out.textContent);};const live=debounce(()=>run(action));$('#entityEncode').onclick=()=>run('encode');$('#entityDecode').onclick=()=>run('decode');input.addEventListener('input',live);if(input.value)run(action);setupCopyButton(()=>out.textContent,()=>swapInputOutput(input,out));}
+
+    function renderJson(){return `<div class="field-grid"><div class="field full"><label for="jsonInput"><span>${t('input')}</span><span class="field-hint">${t('jsonInputHint')}</span></label><textarea class="textarea code" id="jsonInput" spellcheck="false"></textarea></div><div class="field full"><div class="button-row"><button class="button primary" id="jsonFormat" type="button">${t('format')}</button><button class="button" id="jsonMinify" type="button">${t('minify')}</button><button class="button" id="jsonSort" type="button">${t('sortKeys')}</button><button class="button" id="jsonValidate" type="button">${t('validate')}</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box empty" id="jsonOutput">—</div><div class="status-line" id="jsonStatus"></div></div></div>`;}
+    function initJson(){const input=$('#jsonInput'),out=$('#jsonOutput'),status=$('#jsonStatus');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const run=mode=>{try{const data=JSON.parse(input.value);let result='';if(mode==='format')result=JSON.stringify(data,null,2);if(mode==='minify')result=JSON.stringify(data);if(mode==='sort')result=JSON.stringify(sortJson(data),null,2);if(mode==='validate')result=JSON.stringify(data,null,2);out.textContent=result;out.classList.remove('empty');status.textContent=t('validJson');status.className='status-line ok';}catch(e){out.textContent='—';out.classList.add('empty');status.textContent=`${t('invalidJson')}: ${e.message}`;status.className='status-line error';}};$('#jsonFormat').onclick=()=>run('format');$('#jsonMinify').onclick=()=>run('minify');$('#jsonSort').onclick=()=>run('sort');$('#jsonValidate').onclick=()=>run('validate');setupCopyButton(()=>out.textContent==='—'?'':out.textContent,()=>swapInputOutput(input,out));}
+
+    function renderTimestamp(){return `<div class="field-grid"><div class="field full"><label for="timestampInput"><span>${t('timestampValue')}</span><span class="field-hint">${t('timestampHint')}</span></label><input class="input code" id="timestampInput" type="text" autocomplete="off"></div><div class="field full"><div class="button-row"><button class="button primary" id="timestampParse" type="button">${t('parse')}</button><button class="button" id="timestampNow" type="button">${t('now')}</button></div><div class="status-line" id="timestampStatus"></div><div class="kv-list" id="timestampResults" style="margin-top:12px"></div></div></div>`;}
+    function initTimestamp(){const input=$('#timestampInput'),status=$('#timestampStatus'),results=$('#timestampResults');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const render=date=>{if(!date||Number.isNaN(date.getTime())){status.textContent=t('invalidDate');status.className='status-line error';results.innerHTML='';return;}status.textContent='';status.className='status-line';const vals=[[t('localTime'),localDateTime(date)],[t('utcTime'),date.toUTCString()],[t('iso8601'),date.toISOString()],[t('unixSeconds'),Math.floor(date.getTime()/1000)],[t('unixMilliseconds'),date.getTime()],[t('relative'),relativeTime(date)]];results.innerHTML=vals.map(([k,v])=>`<div class="kv-row"><div class="kv-key">${escapeHtml(k)}</div><div class="kv-value">${escapeHtml(v)}</div></div>`).join('');};$('#timestampParse').onclick=()=>render(parseDateInput(input.value));$('#timestampNow').onclick=()=>{const d=new Date();input.value=String(Math.floor(d.getTime()/1000));render(d);};if(input.value)render(parseDateInput(input.value));}
+
+    function renderJwt(){return `<div class="field-grid"><div class="field full"><label for="jwtInput">${t('jwtToken')}</label><textarea class="textarea code" id="jwtInput" spellcheck="false"></textarea></div><div class="field full"><div class="button-row"><button class="button primary" id="jwtDecode" type="button">${t('decode')}</button></div><div class="notice warning">${t('jwtWarning')}</div><div class="status-line" id="jwtStatus"></div><div id="jwtResults"></div></div></div>`;}
+    function initJwt(){const input=$('#jwtInput'),status=$('#jwtStatus'),results=$('#jwtResults');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const timeClaim=(name,value)=>{if(typeof value!=='number')return '';const d=new Date(value*1000);return `<div class="claim"><div class="claim-name">${name}</div><div class="claim-value">${escapeHtml(localDateTime(d))}<br><span style="color:var(--muted);font-weight:500">${escapeHtml(relativeTime(d))}</span></div></div>`;};$('#jwtDecode').onclick=()=>{try{const parts=input.value.trim().split('.');if(parts.length!==3)throw new Error('parts');const header=decodeJwtPart(parts[0]),payload=decodeJwtPart(parts[1]);let life='';const now=Date.now()/1000;if(typeof payload.nbf==='number'&&now<payload.nbf)life=t('notYetValid');else if(typeof payload.exp==='number'&&now>=payload.exp)life=t('expired');else if(typeof payload.exp==='number'||typeof payload.nbf==='number')life=t('active');status.textContent=life;status.className=`status-line ${life===t('expired')?'error':'ok'}`;const claims=['iat','nbf','exp'].map(k=>timeClaim(k,payload[k])).join('');results.innerHTML=`${claims?`<div class="claim-grid">${claims}</div>`:''}<div class="result-head"><strong>${t('header')}</strong><div class="result-actions"><button class="copy-link" type="button" data-copy-jwt="header">${icons.copy}<span>${t('copy')}</span></button><button class="copy-link" type="button" data-send-jwt="header">${icons.send}<span>${t('sendToTool')}</span></button></div></div><div class="output-box">${escapeHtml(safeJson(header))}</div><div class="result-head"><strong>${t('payload')}</strong><div class="result-actions"><button class="copy-link" type="button" data-copy-jwt="payload">${icons.copy}<span>${t('copy')}</span></button><button class="copy-link" type="button" data-send-jwt="payload">${icons.send}<span>${t('sendToTool')}</span></button></div></div><div class="output-box">${escapeHtml(safeJson(payload))}</div><div class="result-head"><strong>${t('signature')}</strong><div class="result-actions"><button class="copy-link" type="button" data-copy-jwt="signature">${icons.copy}<span>${t('copy')}</span></button><button class="copy-link" type="button" data-send-jwt="signature">${icons.send}<span>${t('sendToTool')}</span></button></div></div><div class="output-box">${escapeHtml(parts[2])}</div>`;results.querySelector('[data-copy-jwt="header"]').onclick=()=>copyText(safeJson(header));results.querySelector('[data-copy-jwt="payload"]').onclick=()=>copyText(safeJson(payload));results.querySelector('[data-copy-jwt="signature"]').onclick=()=>copyText(parts[2]);results.querySelector('[data-send-jwt="header"]').onclick=()=>openTransferPicker(()=>safeJson(header));results.querySelector('[data-send-jwt="payload"]').onclick=()=>openTransferPicker(()=>safeJson(payload));results.querySelector('[data-send-jwt="signature"]').onclick=()=>openTransferPicker(()=>parts[2]);}catch(e){status.textContent=t('jwtInvalid');status.className='status-line error';results.innerHTML='';}};if(input.value)$('#jwtDecode').click();}
+
+    function renderCron(){return `<div class="field-grid"><div class="field full"><label for="cronInput"><span>${t('cronExpression')}</span><span class="field-hint">${t('cronHint')}</span></label><input class="input code" id="cronInput" value="*/5 * * * *" autocomplete="off"></div><div class="field full"><div class="button-row"><button class="button primary" id="cronParse" type="button">${t('parse')}</button><button class="button small" type="button" data-cron-preset="* * * * *">* * * * *</button><button class="button small" type="button" data-cron-preset="0 * * * *">0 * * * *</button><button class="button small" type="button" data-cron-preset="0 9 * * 1-5">0 9 * * 1-5</button></div><div class="status-line" id="cronStatus"></div><div id="cronResult"></div></div></div>`;}
+    function initCron(){const input=$('#cronInput'),status=$('#cronStatus'),result=$('#cronResult');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const run=()=>{try{const spec=parseCron(input.value);const runs=nextCronRuns(spec,5);status.textContent='';status.className='status-line';result.innerHTML=`<div class="notice"><strong>${escapeHtml(describeCron(input.value))}</strong><br>${escapeHtml(t('cronTimezone'))}: ${escapeHtml(Intl.DateTimeFormat().resolvedOptions().timeZone||'Local')}</div><div class="result-head"><strong>${t('cronNext')}</strong></div>${runs.length?`<ol class="next-runs">${runs.map(d=>`<li>${escapeHtml(localDateTime(d))}</li>`).join('')}</ol>`:`<div class="status-line error">${t('cronInvalid')}</div>`}`;}catch(e){status.textContent=t('cronInvalid');status.className='status-line error';result.innerHTML='';}};$('#cronParse').onclick=run;$$('[data-cron-preset]').forEach(btn=>btn.onclick=()=>{input.value=btn.dataset.cronPreset;run();});run();}
+
+    function renderRegex(){return `<div class="field-grid"><div class="field"><label for="regexPattern">${t('pattern')}</label><input class="input code" id="regexPattern" value="\\b\\w+@\\w+\\.\\w+\\b" spellcheck="false"></div><div class="field"><span class="field-label">${t('flags')}</span><div class="inline-checks" style="min-height:41px;align-items:center"><label class="check"><input type="checkbox" data-regex-flag="g" checked> g</label><label class="check"><input type="checkbox" data-regex-flag="i" checked> i</label><label class="check"><input type="checkbox" data-regex-flag="m"> m</label><label class="check"><input type="checkbox" data-regex-flag="s"> s</label><label class="check"><input type="checkbox" data-regex-flag="u" checked> u</label></div></div><div class="field full"><label for="regexText">${t('testText')}</label><textarea class="textarea code" id="regexText" spellcheck="false">hello@example.com\nno match\nKitty@Browser.dev</textarea></div><div class="field full"><label for="regexReplacement">${t('replacement')}</label><input class="input code" id="regexReplacement" value="[email]"><div class="button-row"><button class="button primary" id="regexTest" type="button">${t('test')}</button><button class="button" id="regexReplace" type="button">${t('replace')}</button></div><div class="status-line" id="regexStatus"></div><div class="result-head"><strong>${t('matches')}</strong></div><div class="match-preview" id="regexPreview"></div><div class="match-list" id="regexMatches"></div></div></div>`;}
+    function initRegex(){const pattern=$('#regexPattern'),text=$('#regexText'),replacement=$('#regexReplacement'),status=$('#regexStatus'),preview=$('#regexPreview'),list=$('#regexMatches');if(pendingSeed){text.value=pendingSeed;pendingSeed=null;}const flags=()=>$$('[data-regex-flag]').filter(x=>x.checked).map(x=>x.dataset.regexFlag).join('');const test=()=>{try{let f=flags();if(!f.includes('g'))f+='g';const re=new RegExp(pattern.value,f);const matches=[];let m;while((m=re.exec(text.value))&&matches.length<1000){matches.push(m);if(m[0]==='')re.lastIndex++;}let html='',pos=0;for(const match of matches){html+=escapeHtml(text.value.slice(pos,match.index))+`<mark>${escapeHtml(match[0])}</mark>`;pos=match.index+match[0].length;}html+=escapeHtml(text.value.slice(pos));preview.innerHTML=html||escapeHtml(text.value);list.innerHTML=matches.slice(0,30).map((m,i)=>`<div class="match-item">#${i+1} @${m.index}: ${escapeHtml(m[0])}${m.length>1?`<br>${m.slice(1).map((g,j)=>`$${j+1} = ${escapeHtml(String(g))}`).join('<br>')}`:''}</div>`).join('');status.textContent=matches.length?`${formatNumber(matches.length)} ${t('matches')}${matches.length>=1000?` · ${t('tooManyMatches')}`:''}`:t('noMatches');status.className=`status-line ${matches.length?'ok':''}`;}catch(e){status.textContent=`${t('regexInvalid')}: ${e.message}`;status.className='status-line error';preview.textContent='';list.innerHTML='';}};$('#regexTest').onclick=test;$('#regexReplace').onclick=()=>{try{const re=new RegExp(pattern.value,flags());preview.textContent=text.value.replace(re,replacement.value);list.innerHTML='';status.textContent='';status.className='status-line';}catch(e){status.textContent=`${t('regexInvalid')}: ${e.message}`;status.className='status-line error';}};test();}
+
+    function renderHash(){return `<div class="field-grid"><div class="field"><label for="hashAlgorithm">${t('hashAlgorithm')}</label><select class="select code" id="hashAlgorithm"><option>SHA-256</option><option>SHA-1</option><option>SHA-384</option><option>SHA-512</option></select></div><div class="field"><label for="hashFile">${t('file')}</label><input class="input" id="hashFile" type="file"></div><div class="field full"><label for="hashText">${t('hashText')}</label><textarea class="textarea code" id="hashText" spellcheck="false"></textarea><div class="status-line">${t('hashFileHint')}</div><div class="button-row"><button class="button primary" id="hashCalculate" type="button">${t('calculate')}</button></div>${copyResultHeader()}<div class="output-box empty" id="hashOutput">—</div><div class="status-line" id="hashStatus"></div></div></div>`;}
+    function initHash(){const text=$('#hashText'),file=$('#hashFile'),alg=$('#hashAlgorithm'),out=$('#hashOutput'),status=$('#hashStatus');if(pendingSeed){text.value=pendingSeed;pendingSeed=null;}$('#hashCalculate').onclick=async()=>{try{if(!crypto.subtle)throw new Error(t('hashUnavailable'));let data,label='';if(file.files[0]){status.textContent=t('processing');const f=file.files[0];data=await f.arrayBuffer();label=`${t('fileName')}: ${f.name} · ${t('fileSize')}: ${formatBytes(f.size)}`;}else if(text.value){data=new TextEncoder().encode(text.value);}else{status.textContent=t('hashEmpty');status.className='status-line error';return;}const hash=await crypto.subtle.digest(alg.value,data);out.textContent=[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');out.classList.remove('empty');status.textContent=label;status.className='status-line ok';}catch(e){status.textContent=e.message;status.className='status-line error';}};setupCopyButton(()=>out.textContent==='—'?'':out.textContent);}
+
+    function renderUuid(){return `<div class="field-grid"><div class="field"><label for="uuidCount">${t('uuidCount')}</label><input class="input" id="uuidCount" type="number" min="1" max="100" value="5"></div><div class="field" style="display:flex;align-items:flex-end"><button class="button primary" id="uuidGenerate" type="button">${t('generate')}</button></div><div class="field full">${copyResultHeader()}<div class="output-box" id="uuidOutput"></div></div></div>`;}
+    function initUuid(){const count=$('#uuidCount'),out=$('#uuidOutput');const run=()=>{const n=Math.min(100,Math.max(1,Number(count.value)||1));count.value=String(n);out.textContent=Array.from({length:n},uuidV4).join('\n');};$('#uuidGenerate').onclick=run;setupCopyButton(()=>out.textContent);run();}
+
+    function renderRandom(){return `<div class="field-grid"><div class="field"><label for="randomLength">${t('length')}</label><input class="input" id="randomLength" type="number" min="1" max="4096" value="32"></div><div class="field"><span class="field-label">Character sets</span><div class="inline-checks" style="min-height:41px;align-items:center"><label class="check"><input id="randomUpper" type="checkbox" checked> ${t('uppercase')}</label><label class="check"><input id="randomLower" type="checkbox" checked> ${t('lowercase')}</label><label class="check"><input id="randomNumbers" type="checkbox" checked> ${t('numbers')}</label><label class="check"><input id="randomSymbols" type="checkbox"> ${t('symbols')}</label></div></div><div class="field full"><div class="button-row"><button class="button primary" id="randomGenerate" type="button">${t('generate')}</button></div>${copyResultHeader()}<div class="output-box" id="randomOutput"></div><div class="status-line" id="randomStatus"></div></div></div>`;}
+    function initRandom(){const out=$('#randomOutput'),status=$('#randomStatus');const run=()=>{let alphabet='';if($('#randomUpper').checked)alphabet+='ABCDEFGHIJKLMNOPQRSTUVWXYZ';if($('#randomLower').checked)alphabet+='abcdefghijklmnopqrstuvwxyz';if($('#randomNumbers').checked)alphabet+='0123456789';if($('#randomSymbols').checked)alphabet+='!@#$%^&*()-_=+[]{};:,.?';if(!alphabet){status.textContent=t('randomInvalid');status.className='status-line error';out.textContent='';return;}const n=Math.min(4096,Math.max(1,Number($('#randomLength').value)||32));$('#randomLength').value=String(n);out.textContent=randomString(n,alphabet);status.textContent='';status.className='status-line';};$('#randomGenerate').onclick=run;setupCopyButton(()=>out.textContent);run();}
+
+    function renderUrlParser(){return `<div class="field-grid"><div class="field full"><label for="urlParserInput"><span>${t('urlValue')}</span><span class="field-hint">${t('urlExample')}</span></label><input class="input code" id="urlParserInput" type="text" spellcheck="false"></div><div class="field full"><div class="button-row"><button class="button primary" id="urlParserParse" type="button">${t('parse')}</button></div><div class="status-line" id="urlParserStatus"></div><div id="urlParserResult"></div></div></div>`;}
+    function initUrlParser(){const input=$('#urlParserInput'),status=$('#urlParserStatus'),result=$('#urlParserResult');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}else if(!input.value) input.value='https://example.com:8080/path/to?q=kitty&lang=ja#section';const run=()=>{try{const u=new URL(input.value.trim());status.textContent='';status.className='status-line';const kv=[[t('protocol'),u.protocol],[t('hostname'),u.hostname],[t('port'),u.port||'—'],[t('pathname'),u.pathname],[t('hashFragment'),u.hash||'—'],[t('origin'),u.origin]];const query=[...u.searchParams.entries()];result.innerHTML=`<div class="kv-list" style="margin-top:12px">${kv.map(([k,v])=>`<div class="kv-row"><div class="kv-key">${escapeHtml(k)}</div><div class="kv-value">${escapeHtml(v)}</div></div>`).join('')}</div><div class="result-head"><strong>${t('query')}</strong></div>${query.length?`<div style="overflow:auto"><table class="query-table"><thead><tr><th>Key</th><th>Value</th></tr></thead><tbody>${query.map(([k,v])=>`<tr><td><code>${escapeHtml(k)}</code></td><td><code>${escapeHtml(v)}</code></td></tr>`).join('')}</tbody></table></div>`:`<div class="output-box empty">—</div>`}`;}catch(e){status.textContent=t('invalidUrl');status.className='status-line error';result.innerHTML='';}};const live=debounce(run);$('#urlParserParse').onclick=run;input.addEventListener('input',live);run();}
+
+    function renderNumberBase(){return `<div class="field-grid"><div class="field"><label for="numberInput">${t('input')}</label><input class="input code" id="numberInput" value="255" spellcheck="false"></div><div class="field"><label for="numberBase">${t('sourceBase')}</label><select class="select" id="numberBase"><option value="auto">${t('auto')}</option><option value="2">2</option><option value="8">8</option><option value="10">10</option><option value="16">16</option></select></div><div class="field full"><div class="button-row"><button class="button primary" id="numberConvert" type="button">${t('calculate')}</button></div><div class="status-line" id="numberStatus"></div><div class="kv-list" id="numberResult" style="margin-top:12px"></div></div></div>`;}
+    function initNumberBase(){const input=$('#numberInput'),base=$('#numberBase'),status=$('#numberStatus'),result=$('#numberResult');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const run=()=>{try{let raw=input.value.trim().replace(/_/g,'');if(!raw)throw new Error('empty');let sign='';if(raw.startsWith('-')){sign='-';raw=raw.slice(1);}let radix=base.value==='auto'?10:Number(base.value);if(base.value==='auto'){if(/^0x/i.test(raw)){radix=16;raw=raw.slice(2);}else if(/^0b/i.test(raw)){radix=2;raw=raw.slice(2);}else if(/^0o/i.test(raw)){radix=8;raw=raw.slice(2);}}const patterns={2:/^[01]+$/,8:/^[0-7]+$/,10:/^\d+$/,16:/^[0-9a-f]+$/i};if(!patterns[radix].test(raw))throw new Error('digit');let n=BigInt(parseInt('0',10));const digits='0123456789abcdef';for(const ch of raw.toLowerCase()){n=n*BigInt(radix)+BigInt(digits.indexOf(ch));}if(sign)n=-n;const vals=[[t('decimal'),n.toString(10)],[t('hexadecimal'),`${n<0n?'-':''}${(n<0n?-n:n).toString(16).toUpperCase()}`],[t('binary'),`${n<0n?'-':''}${(n<0n?-n:n).toString(2)}`],[t('octal'),`${n<0n?'-':''}${(n<0n?-n:n).toString(8)}`]];result.innerHTML=vals.map(([k,v])=>`<div class="kv-row"><div class="kv-key">${escapeHtml(k)}</div><div class="kv-value">${escapeHtml(v)}</div></div>`).join('');status.textContent='';status.className='status-line';}catch(e){status.textContent=t('integerOnly');status.className='status-line error';result.innerHTML='';}};const live=debounce(run);$('#numberConvert').onclick=run;input.addEventListener('input',live);base.addEventListener('change',live);run();}
+
+    function renderCase(){return `<div class="field-grid"><div class="field full"><label for="caseInput">${t('sourceText')}</label><textarea class="textarea code" id="caseInput" spellcheck="false">hello browser kitty</textarea></div><div class="field full"><div class="case-list" id="caseResult"></div></div></div>`;}
+    function initCase(){const input=$('#caseInput'),result=$('#caseResult');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const run=()=>{const words=splitWords(input.value);const cases=[['camelCase',words.map((w,i)=>i?w&&capitalize(w):w).join('')],['pascalCase',words.map(capitalize).join('')],['snakeCase',words.join('_')],['kebabCase',words.join('-')],['constantCase',words.join('_').toLocaleUpperCase()],['titleCase',words.map(capitalize).join(' ')]];result.innerHTML=cases.map(([key,value])=>`<div class="case-row"><span class="case-name">${escapeHtml(t(key))}</span><span class="case-value" title="${escapeHtml(value)}">${escapeHtml(value)}</span><button class="star-button" type="button" data-copy-case="${escapeHtml(value)}" aria-label="${escapeHtml(t('copy'))}">${icons.copy}</button></div>`).join('');result.querySelectorAll('[data-copy-case]').forEach(btn=>btn.onclick=()=>copyText(btn.dataset.copyCase));};input.addEventListener('input',run);run();}
+
+    function renderText(){return `<div class="field-grid"><div class="field full"><label for="textInput">${t('input')}</label><textarea class="textarea code" id="textInput" spellcheck="false"></textarea><div class="metric-grid" id="textMetrics"></div><div class="button-row"><button class="button" id="textTrim" type="button">${t('trim')}</button><button class="button" id="textDedupe" type="button">${t('dedupe')}</button><button class="button" id="textSort" type="button">${t('sortLines')}</button></div></div></div>`;}
+    function initText(){const input=$('#textInput'),metrics=$('#textMetrics');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const update=()=>{const v=input.value;const words=v.trim()?(v.match(/[\p{L}\p{N}]+(?:['’_-][\p{L}\p{N}]+)*/gu)||[]).length:0;const data=[[formatNumber([...v].length),t('characters')],[formatNumber(new TextEncoder().encode(v).length),t('utf8Bytes')],[formatNumber(v.length),t('utf16Units')],[formatNumber(words),t('words')],[formatNumber(v?v.split(/\r?\n/).length:0),t('lines')]];metrics.innerHTML=data.map(([value,label])=>`<div class="metric"><span class="metric-value">${value}</span><span class="metric-label">${escapeHtml(label)}</span></div>`).join('');};input.addEventListener('input',update);$('#textTrim').onclick=()=>{input.value=input.value.trim();update();};$('#textDedupe').onclick=()=>{input.value=[...new Set(input.value.split(/\r?\n/))].join('\n');update();};$('#textSort').onclick=()=>{input.value=input.value.split(/\r?\n/).sort((a,b)=>a.localeCompare(b,language)).join('\n');update();};update();}
+
+
+    function parseSimpleScalar(value) {
+      const v = value.trim();
+      if (!v) return '';
+      if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) return v.slice(1, -1).replace(/\\n/g, '\n').replace(/\\t/g, '\t');
+      if (v === 'null' || v === '~') return null;
+      if (v === 'true') return true;
+      if (v === 'false') return false;
+      if (/^-?\d+(?:\.\d+)?$/.test(v)) return Number(v);
+      return v;
+    }
+    function yamlScalarString(value) {
+      if (value === null) return 'null';
+      if (typeof value === 'boolean' || typeof value === 'number') return String(value);
+      const s = String(value);
+      if (s === '' || /[:#\-\n\r\t]|^\s|\s$/.test(s)) return JSON.stringify(s);
+      return s;
+    }
+    function jsonToYaml(value, indent = 0) {
+      const pad = '  '.repeat(indent);
+      if (Array.isArray(value)) {
+        if (!value.length) return pad + '[]';
+        return value.map(item => {
+          if (item && typeof item === 'object') {
+            const rendered = jsonToYaml(item, indent + 1);
+            const lines = rendered.split('\n');
+            return pad + '- ' + lines[0].trimStart() + (lines.length > 1 ? '\n' + lines.slice(1).join('\n') : '');
+          }
+          return pad + '- ' + yamlScalarString(item);
+        }).join('\n');
+      }
+      if (value && typeof value === 'object') {
+        const keys = Object.keys(value);
+        if (!keys.length) return pad + '{}';
+        return keys.map(key => {
+          const item = value[key];
+          if (item && typeof item === 'object') {
+            return pad + key + ':\n' + jsonToYaml(item, indent + 1);
+          }
+          return pad + key + ': ' + yamlScalarString(item);
+        }).join('\n');
+      }
+      return pad + yamlScalarString(value);
+    }
+    function parseYamlSubset(text) {
+      const lines = text.replace(/\t/g, '  ').split(/\r?\n/).filter(line => !/^\s*(#.*)?$/.test(line));
+      if (!lines.length) return null;
+      const root = { type: null, value: null };
+      const stack = [{ indent: -1, node: root }];
+      function ensureObject(container) {
+        if (container.type === null) { container.type = 'object'; container.value = {}; }
+        if (container.type !== 'object') throw new Error('Mixed YAML structures are not supported.');
+      }
+      function ensureArray(container) {
+        if (container.type === null) { container.type = 'array'; container.value = []; }
+        if (container.type !== 'array') throw new Error('Mixed YAML structures are not supported.');
+      }
+      lines.forEach(rawLine => {
+        const indent = rawLine.match(/^\s*/)[0].length;
+        const line = rawLine.trim();
+        while (stack.length > 1 && indent <= stack[stack.length - 1].indent) stack.pop();
+        const parent = stack[stack.length - 1].node;
+        if (line.startsWith('- ')) {
+          ensureArray(parent);
+          const item = line.slice(2);
+          if (!item) {
+            const child = { type: null, value: null };
+            parent.value.push(child);
+            stack.push({ indent, node: child });
+          } else if (/^[^:]+:\s*/.test(item) && !/^['"]/.test(item)) {
+            const idx = item.indexOf(':');
+            const key = item.slice(0, idx).trim();
+            const rest = item.slice(idx + 1).trim();
+            const child = { type: 'object', value: {} };
+            child.value[key] = rest ? parseSimpleScalar(rest) : (() => { const grand = { type: null, value: null }; stack.push({ indent: indent + 2, node: grand }); return grand; })();
+            parent.value.push(child);
+            if (!rest) child.value[key] = stack[stack.length - 1].node;
+            stack.push({ indent, node: child });
+          } else {
+            parent.value.push(parseSimpleScalar(item));
+          }
+          return;
+        }
+        const idx = line.indexOf(':');
+        if (idx < 0) throw new Error('Unsupported YAML line: ' + line);
+        ensureObject(parent);
+        const key = line.slice(0, idx).trim();
+        const rest = line.slice(idx + 1).trim();
+        if (rest) parent.value[key] = parseSimpleScalar(rest);
+        else {
+          const child = { type: null, value: null };
+          parent.value[key] = child;
+          stack.push({ indent, node: child });
+        }
+      });
+      function unwrap(value) {
+        if (value && typeof value === 'object' && 'type' in value && 'value' in value) {
+          if (value.type === 'array') return value.value.map(unwrap);
+          if (value.type === 'object') return Object.fromEntries(Object.entries(value.value).map(([k, v]) => [k, unwrap(v)]));
+          return null;
+        }
+        return value;
+      }
+      return unwrap(root);
+    }
+    function parseCsv(text) {
+      const rows = [];
+      let row = [], cell = '', inQuotes = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const ch = text[i];
+        if (inQuotes) {
+          if (ch === '"') {
+            if (text[i + 1] === '"') { cell += '"'; i += 1; }
+            else inQuotes = false;
+          } else cell += ch;
+        } else if (ch === '"') inQuotes = true;
+        else if (ch === ',') { row.push(cell); cell = ''; }
+        else if (ch === '\n') { row.push(cell); rows.push(row); row = []; cell = ''; }
+        else if (ch !== '\r') cell += ch;
+      }
+      row.push(cell); rows.push(row);
+      return rows.filter(r => !(r.length === 1 && r[0] === ''));
+    }
+    function stringifyCsv(rows) {
+      return rows.map(row => row.map(cell => {
+        const s = cell == null ? '' : String(cell);
+        return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      }).join(',')).join('\n');
+    }
+    function flattenJsonDiff(left, right, path = '$', changes = []) {
+      if (Array.isArray(left) && Array.isArray(right)) {
+        const max = Math.max(left.length, right.length);
+        for (let i = 0; i < max; i += 1) flattenJsonDiff(left[i], right[i], `${path}[${i}]`, changes);
+        return changes;
+      }
+      if (left && right && typeof left === 'object' && typeof right === 'object') {
+        const keys = new Set([...Object.keys(left), ...Object.keys(right)]);
+        [...keys].sort().forEach(key => flattenJsonDiff(left[key], right[key], path === '$' ? `$.${key}` : `${path}.${key}`, changes));
+        return changes;
+      }
+      if (left === undefined && right !== undefined) changes.push({ type: '+', path, before: '', after: safeJson(right) });
+      else if (left !== undefined && right === undefined) changes.push({ type: '-', path, before: safeJson(left), after: '' });
+      else if (JSON.stringify(left) !== JSON.stringify(right)) changes.push({ type: '~', path, before: safeJson(left), after: safeJson(right) });
+      return changes;
+    }
+    function tokenizeJsonPath(path) {
+      const tokens = [];
+      let i = 0;
+      path = path.trim();
+      if (!path.startsWith('$')) throw new Error('JSONPath must start with $.');
+      i = 1;
+      while (i < path.length) {
+        const ch = path[i];
+        if (ch === '.') {
+          i += 1;
+          if (path[i] === '*') { tokens.push({ type: 'wildcard' }); i += 1; continue; }
+          const m = path.slice(i).match(/^[A-Za-z_$][\w$]*/);
+          if (!m) throw new Error('Invalid property after dot.');
+          tokens.push({ type: 'prop', value: m[0] });
+          i += m[0].length;
+          continue;
+        }
+        if (ch === '[') {
+          const end = path.indexOf(']', i);
+          if (end < 0) throw new Error('Missing ].');
+          const inner = path.slice(i + 1, end).trim();
+          if (inner === '*') tokens.push({ type: 'wildcard' });
+          else if (/^\d+$/.test(inner)) tokens.push({ type: 'index', value: Number(inner) });
+          else if ((inner.startsWith('"') && inner.endsWith('"')) || (inner.startsWith("'") && inner.endsWith("'"))) tokens.push({ type: 'prop', value: inner.slice(1, -1) });
+          else throw new Error('Unsupported bracket notation.');
+          i = end + 1;
+          continue;
+        }
+        throw new Error('Unexpected character in JSONPath.');
+      }
+      return tokens;
+    }
+    function evaluateJsonPath(data, pathExpr) {
+      const tokens = tokenizeJsonPath(pathExpr);
+      let current = [{ path: '$', value: data }];
+      tokens.forEach(token => {
+        const next = [];
+        current.forEach(entry => {
+          if (token.type === 'prop') {
+            if (entry.value && typeof entry.value === 'object' && token.value in entry.value) next.push({ path: `${entry.path}.${token.value}`, value: entry.value[token.value] });
+          } else if (token.type === 'index') {
+            if (Array.isArray(entry.value) && token.value < entry.value.length) next.push({ path: `${entry.path}[${token.value}]`, value: entry.value[token.value] });
+          } else if (token.type === 'wildcard') {
+            if (Array.isArray(entry.value)) entry.value.forEach((value, index) => next.push({ path: `${entry.path}[${index}]`, value }));
+            else if (entry.value && typeof entry.value === 'object') Object.entries(entry.value).forEach(([key, value]) => next.push({ path: `${entry.path}.${key}`, value }));
+          }
+        });
+        current = next;
+      });
+      return current;
+    }
+    function decodeUnicodeEscapes(value) {
+      return value.replace(/\\u\{([0-9a-fA-F]+)\}|\\u([0-9a-fA-F]{4})|\\x([0-9a-fA-F]{2})/g, (_, codePoint, u16, x2) => {
+        const n = parseInt(codePoint || u16 || x2, 16);
+        return String.fromCodePoint(n);
+      });
+    }
+    function textToHex(text, separator = ' ') {
+      const bytes = new TextEncoder().encode(text);
+      return [...bytes].map(b => b.toString(16).padStart(2, '0')).join(separator);
+    }
+    function hexToText(text) {
+      const clean = text.replace(/0x/gi, '').replace(/[^0-9a-f]/gi, '');
+      if (!clean || clean.length % 2) throw new Error('Hex input must contain an even number of digits.');
+      const bytes = new Uint8Array(clean.match(/../g).map(x => parseInt(x, 16)));
+      return new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+    }
+    function parseRgbString(value) {
+      const m = value.trim().match(/^rgba?\(([^)]+)\)$/i);
+      if (!m) return null;
+      const parts = m[1].split(',').map(x => Number(x.trim()));
+      if (parts.length < 3 || parts.slice(0, 3).some(n => !Number.isFinite(n))) return null;
+      return { r: Math.max(0, Math.min(255, parts[0])), g: Math.max(0, Math.min(255, parts[1])), b: Math.max(0, Math.min(255, parts[2])) };
+    }
+    function parseHexColor(value) {
+      const hex = value.trim().replace(/^#/, '');
+      if (![3, 6].includes(hex.length) || /[^0-9a-f]/i.test(hex)) return null;
+      const full = hex.length === 3 ? [...hex].map(x => x + x).join('') : hex;
+      return { r: parseInt(full.slice(0, 2), 16), g: parseInt(full.slice(2, 4), 16), b: parseInt(full.slice(4, 6), 16) };
+    }
+    function rgbToHex({ r, g, b }) { return '#' + [r, g, b].map(n => Math.round(n).toString(16).padStart(2, '0')).join('').toUpperCase(); }
+    function rgbToHsl({ r, g, b }) {
+      r /= 255; g /= 255; b /= 255; const max = Math.max(r, g, b), min = Math.min(r, g, b); let h, s; const l = (max + min) / 2; const d = max - min;
+      if (d === 0) { h = s = 0; }
+      else {
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+          case g: h = ((b - r) / d + 2); break;
+          default: h = ((r - g) / d + 4); break;
+        }
+        h *= 60;
+      }
+      return { h: Math.round(h || 0), s: Math.round((s || 0) * 100), l: Math.round(l * 100) };
+    }
+    function hslToRgb({ h, s, l }) {
+      s /= 100; l /= 100; const c = (1 - Math.abs(2 * l - 1)) * s; const x = c * (1 - Math.abs((h / 60) % 2 - 1)); const m = l - c / 2; let r = 0, g = 0, b = 0;
+      if (h < 60) [r, g, b] = [c, x, 0]; else if (h < 120) [r, g, b] = [x, c, 0]; else if (h < 180) [r, g, b] = [0, c, x]; else if (h < 240) [r, g, b] = [0, x, c]; else if (h < 300) [r, g, b] = [x, 0, c]; else [r, g, b] = [c, 0, x];
+      return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) };
+    }
+    function ipv4ToInt(ip) {
+      const parts = ip.trim().split('.').map(Number);
+      if (parts.length !== 4 || parts.some(n => !Number.isInteger(n) || n < 0 || n > 255)) throw new Error('Invalid IPv4 address.');
+      return ((parts[0] * 256 + parts[1]) * 256 + parts[2]) * 256 + parts[3];
+    }
+    function intToIpv4(num) {
+      return [num >>> 24, (num >>> 16) & 255, (num >>> 8) & 255, num & 255].join('.');
+    }
+    const HTTP_STATUS_MAP = {
+      100:'Continue',101:'Switching Protocols',102:'Processing',103:'Early Hints',
+      200:'OK',201:'Created',202:'Accepted',203:'Non-Authoritative Information',204:'No Content',205:'Reset Content',206:'Partial Content',207:'Multi-Status',208:'Already Reported',226:'IM Used',
+      300:'Multiple Choices',301:'Moved Permanently',302:'Found',303:'See Other',304:'Not Modified',307:'Temporary Redirect',308:'Permanent Redirect',
+      400:'Bad Request',401:'Unauthorized',402:'Payment Required',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',406:'Not Acceptable',407:'Proxy Authentication Required',408:'Request Timeout',409:'Conflict',410:'Gone',411:'Length Required',412:'Precondition Failed',413:'Payload Too Large',414:'URI Too Long',415:'Unsupported Media Type',416:'Range Not Satisfiable',417:'Expectation Failed',418:"I'm a teapot",421:'Misdirected Request',422:'Unprocessable Content',423:'Locked',424:'Failed Dependency',425:'Too Early',426:'Upgrade Required',428:'Precondition Required',429:'Too Many Requests',431:'Request Header Fields Too Large',451:'Unavailable For Legal Reasons',
+      500:'Internal Server Error',501:'Not Implemented',502:'Bad Gateway',503:'Service Unavailable',504:'Gateway Timeout',505:'HTTP Version Not Supported',506:'Variant Also Negotiates',507:'Insufficient Storage',508:'Loop Detected',510:'Not Extended',511:'Network Authentication Required'
+    };
+
+    function renderUnicode(){return `<div class="field-grid"><div class="field full"><label for="unicodeInput">Input</label><textarea class="textarea code" id="unicodeInput" spellcheck="false">こんにちは Browser Kitty 👋</textarea><div class="button-row"><button class="button primary" id="unicodeEncode" type="button">Escape</button><button class="button" id="unicodeDecode" type="button">Unescape</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box" id="unicodeOutput"></div><div class="status-line" id="unicodeStatus"></div></div></div>`;}
+    function initUnicode(){const input=$('#unicodeInput'),output=$('#unicodeOutput'),status=$('#unicodeStatus');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}let action=/\\u(?:\{|[0-9a-f]{4})/i.test(input.value)?'decode':'encode';const run=kind=>{action=kind;try{const value=kind==='encode'?Array.from(input.value).map(ch=>{const cp=ch.codePointAt(0);return cp<=0xFFFF?`\\u${cp.toString(16).padStart(4,'0')}`:`\\u{${cp.toString(16)}}`;}).join(''):decodeUnicodeEscapes(input.value);output.textContent=value;status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};const live=debounce(()=>run(action));$('#unicodeEncode').onclick=()=>run('encode');$('#unicodeDecode').onclick=()=>run('decode');input.addEventListener('input',live);run(action);setupCopyButton(()=>output.textContent,()=>swapInputOutput(input,output));}
+
+    function renderHex(){return `<div class="field-grid"><div class="field full"><label for="hexInput">Text or hex</label><textarea class="textarea code" id="hexInput" spellcheck="false">hello</textarea><div class="button-row"><button class="button primary" id="hexEncode" type="button">Text → Hex</button><button class="button" id="hexDecode" type="button">Hex → Text</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box" id="hexOutput"></div><div class="status-line" id="hexStatus"></div></div></div>`;}
+    function initHex(){const input=$('#hexInput'),output=$('#hexOutput'),status=$('#hexStatus');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}let action=/^(?:0x)?[0-9a-f]{2}(?:[\s,:-]+(?:0x)?[0-9a-f]{2})+$/i.test(input.value.trim())?'decode':'encode';const run=kind=>{action=kind;try{output.textContent=kind==='encode'?textToHex(input.value):hexToText(input.value);status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};const live=debounce(()=>run(action));$('#hexEncode').onclick=()=>run('encode');$('#hexDecode').onclick=()=>run('decode');input.addEventListener('input',live);run(action);setupCopyButton(()=>output.textContent,()=>swapInputOutput(input,output));}
+
+    function renderDataUri(){return `<div class="field-grid"><div class="field"><label for="dataUriMime">MIME type</label><input class="input code" id="dataUriMime" value="text/plain;charset=utf-8"></div><div class="field"><label for="dataUriMode">Mode</label><select class="select" id="dataUriMode"><option value="percent">Percent-encode text</option><option value="base64">Base64 payload</option></select></div><div class="field full"><label for="dataUriInput">Input</label><textarea class="textarea code" id="dataUriInput" spellcheck="false">Hello Browser Kitty</textarea><div class="button-row"><button class="button primary" id="dataUriEncode" type="button">Encode</button><button class="button" id="dataUriDecode" type="button">Decode</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box" id="dataUriOutput"></div><div class="status-line" id="dataUriStatus"></div></div></div>`;}
+    function initDataUri(){const input=$('#dataUriInput'),mime=$('#dataUriMime'),mode=$('#dataUriMode'),output=$('#dataUriOutput'),status=$('#dataUriStatus');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}let action=/^data:/i.test(input.value.trim())?'decode':'encode';const run=kind=>{action=kind;try{if(kind==='encode')output.textContent=mode.value==='base64'?`data:${mime.value};base64,${utf8ToBase64(input.value)}`:`data:${mime.value},${encodeURIComponent(input.value)}`;else{const raw=input.value.trim();const m=raw.match(/^data:([^,]*?),(.*)$/s);if(!m)throw new Error('Enter a valid data URI.');const meta=m[1],payload=m[2];const decoded=/;base64/i.test(meta)?base64ToUtf8(payload):decodeURIComponent(payload);output.textContent=`MIME: ${meta || 'text/plain;charset=US-ASCII'}\n\n${decoded}`;}status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};const live=debounce(()=>run(action));$('#dataUriEncode').onclick=()=>run('encode');$('#dataUriDecode').onclick=()=>run('decode');input.addEventListener('input',live);mime.addEventListener('input',live);mode.addEventListener('change',live);run(action);setupCopyButton(()=>output.textContent,()=>swapInputOutput(input,output));}
+
+    function renderYaml(){return `<div class="field-grid"><div class="field full"><label for="yamlInput">JSON or YAML</label><textarea class="textarea code" id="yamlInput" spellcheck="false">{"name":"kitty","items":[1,2,3]}</textarea><div class="button-row"><button class="button primary" id="yamlToYaml" type="button">JSON → YAML</button><button class="button" id="yamlToJson" type="button">YAML → JSON</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box" id="yamlOutput"></div><div class="notice warning">YAML parsing supports a simple subset: objects, arrays, numbers, booleans, null, and quoted strings.</div><div class="status-line" id="yamlStatus"></div></div></div>`;}
+    function initYaml(){const input=$('#yamlInput'),output=$('#yamlOutput'),status=$('#yamlStatus');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}$('#yamlToYaml').onclick=()=>{try{output.textContent=jsonToYaml(JSON.parse(input.value));status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};$('#yamlToJson').onclick=()=>{try{output.textContent=safeJson(parseYamlSubset(input.value));status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};setupCopyButton(()=>output.textContent,()=>swapInputOutput($('#yamlInput'),$('#yamlOutput')));}
+
+    function renderCsv(){return `<div class="field-grid"><div class="field full"><label for="csvInput">CSV or JSON array</label><textarea class="textarea code" id="csvInput" spellcheck="false">name,age\nAlice,20\nBob,21</textarea><div class="button-row"><button class="button primary" id="csvToJson" type="button">CSV → JSON</button><button class="button" id="csvToCsv" type="button">JSON → CSV</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box" id="csvOutput"></div><div class="status-line" id="csvStatus"></div></div></div>`;}
+    function initCsv(){const input=$('#csvInput'),output=$('#csvOutput'),status=$('#csvStatus');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}$('#csvToJson').onclick=()=>{try{const rows=parseCsv(input.value);if(!rows.length)throw new Error('No CSV rows found.');const [header,...body]=rows;output.textContent=safeJson(body.map(row=>Object.fromEntries(header.map((key,i)=>[key,row[i] ?? '']))));status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};$('#csvToCsv').onclick=()=>{try{const data=JSON.parse(input.value);if(!Array.isArray(data))throw new Error('Enter a JSON array of objects.');const keys=[...new Set(data.flatMap(item=>Object.keys(item||{})))];const rows=[keys,...data.map(item=>keys.map(key=>item?.[key] ?? ''))];output.textContent=stringifyCsv(rows);status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};setupCopyButton(()=>output.textContent,()=>swapInputOutput($('#csvInput'),$('#csvOutput')));}
+
+    function renderJsonDiff(){return `<div class="field-grid two"><div class="field"><label for="jsonDiffLeft">Left JSON</label><textarea class="textarea code" id="jsonDiffLeft" spellcheck="false">{"name":"kitty","age":2}</textarea></div><div class="field"><label for="jsonDiffRight">Right JSON</label><textarea class="textarea code" id="jsonDiffRight" spellcheck="false">{"name":"kitty","age":3,"likes":["fish"]}</textarea></div><div class="field full"><div class="button-row"><button class="button primary" id="jsonDiffRun" type="button">Compare</button></div><div class="status-line" id="jsonDiffStatus"></div><div class="match-list" id="jsonDiffOutput"></div></div></div>`;}
+    function initJsonDiff(){const left=$('#jsonDiffLeft'),right=$('#jsonDiffRight'),status=$('#jsonDiffStatus'),output=$('#jsonDiffOutput');$('#jsonDiffRun').onclick=()=>{try{const changes=flattenJsonDiff(JSON.parse(left.value),JSON.parse(right.value));output.innerHTML=changes.length?changes.map(change=>`<div class="match-item"><strong>${change.type}</strong> ${escapeHtml(change.path)}${change.type==='~'?`<br>${escapeHtml(change.before)} → ${escapeHtml(change.after)}`:change.type==='+'?`<br>${escapeHtml(change.after)}`:`<br>${escapeHtml(change.before)}`}</div>`).join(''):`<div class="match-item">No differences</div>`;status.textContent=`${changes.length} change(s)`;status.className='status-line ok';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';output.innerHTML='';}};$('#jsonDiffRun').click();}
+
+    function renderJsonPath(){return `<div class="field-grid"><div class="field full"><label for="jsonPathInput">JSON</label><textarea class="textarea code" id="jsonPathInput" spellcheck="false">{"users":[{"name":"Alice"},{"name":"Bob"}]}</textarea></div><div class="field"><label for="jsonPathExpr">JSONPath</label><input class="input code" id="jsonPathExpr" value="$.users[*].name"></div><div class="field" style="align-self:end"><div class="button-row"><button class="button primary" id="jsonPathRun" type="button">Query</button></div></div><div class="field full"><div class="status-line" id="jsonPathStatus"></div><div class="match-list" id="jsonPathOutput"></div></div></div>`;}
+    function initJsonPath(){const input=$('#jsonPathInput'),expr=$('#jsonPathExpr'),status=$('#jsonPathStatus'),output=$('#jsonPathOutput');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}$('#jsonPathRun').onclick=()=>{try{const matches=evaluateJsonPath(JSON.parse(input.value), expr.value);output.innerHTML=matches.length?matches.map(match=>`<div class="match-item"><strong>${escapeHtml(match.path)}</strong><br>${escapeHtml(typeof match.value==='string'?match.value:safeJson(match.value))}</div>`).join(''):`<div class="match-item">No matches</div>`;status.textContent=`${matches.length} match(es)`;status.className='status-line ok';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';output.innerHTML='';}};$('#jsonPathRun').click();}
+
+    function renderSortLines(){return `<div class="field-grid"><div class="field full"><label for="sortLinesInput">Lines</label><textarea class="textarea code" id="sortLinesInput" spellcheck="false">banana\napple\norange</textarea><div class="button-row"><button class="button primary" id="sortLinesAsc" type="button">Sort A → Z</button><button class="button" id="sortLinesDesc" type="button">Sort Z → A</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box" id="sortLinesOutput"></div></div></div>`;}
+    function initSortLines(){const input=$('#sortLinesInput'),output=$('#sortLinesOutput');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const run=desc=>{const lines=input.value.split(/\r?\n/);lines.sort((a,b)=>a.localeCompare(b, language));if(desc)lines.reverse();output.textContent=lines.join('\n');};$('#sortLinesAsc').onclick=()=>run(false);$('#sortLinesDesc').onclick=()=>run(true);run(false);setupCopyButton(()=>output.textContent,()=>swapInputOutput($('#sortLinesInput'),$('#sortLinesOutput')));}
+
+    function renderDeduplicate(){return `<div class="field-grid"><div class="field full"><label for="dedupeInput">Lines</label><textarea class="textarea code" id="dedupeInput" spellcheck="false">apple\nbanana\napple</textarea><div class="button-row"><button class="button primary" id="dedupeRun" type="button">Remove duplicates</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box" id="dedupeOutput"></div></div></div>`;}
+    function initDeduplicate(){const input=$('#dedupeInput'),output=$('#dedupeOutput');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const run=()=>{output.textContent=[...new Set(input.value.split(/\r?\n/))].join('\n');};$('#dedupeRun').onclick=run;run();setupCopyButton(()=>output.textContent,()=>swapInputOutput($('#dedupeInput'),$('#dedupeOutput')));}
+
+    function renderEscape(){return `<div class="field-grid"><div class="field"><label for="escapeMode">Mode</label><select class="select" id="escapeMode"><option value="json">JSON string escape</option><option value="json-decode">JSON string unescape</option><option value="regex">Regex escape</option></select></div><div class="field full"><label for="escapeInput">Input</label><textarea class="textarea code" id="escapeInput" spellcheck="false">hello.*(world)</textarea><div class="button-row"><button class="button primary" id="escapeRun" type="button">Convert</button></div>${copyResultHeader(t('result'),{swap:true})}<div class="output-box" id="escapeOutput"></div><div class="status-line" id="escapeStatus"></div></div></div>`;}
+    function initEscape(){const mode=$('#escapeMode'),input=$('#escapeInput'),output=$('#escapeOutput'),status=$('#escapeStatus');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const run=()=>{try{if(mode.value==='json')output.textContent=JSON.stringify(input.value);else if(mode.value==='json-decode')output.textContent=JSON.parse(input.value);else output.textContent=input.value.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};const live=debounce(run);$('#escapeRun').onclick=run;input.addEventListener('input',live);mode.addEventListener('change',live);run();setupCopyButton(()=>output.textContent,()=>swapInputOutput(input,output));}
+
+    function renderIso8601(){return `<div class="field-grid"><div class="field full"><label for="isoInput">Date / time</label><input class="input code" id="isoInput" value="2026-08-20T12:34:56+09:00"></div><div class="field full"><div class="button-row"><button class="button primary" id="isoRun" type="button">Normalize</button></div><div class="status-line" id="isoStatus"></div><div class="kv-list" id="isoOutput"></div></div></div>`;}
+    function initIso8601(){const input=$('#isoInput'),status=$('#isoStatus'),output=$('#isoOutput');if(pendingSeed){input.value=pendingSeed;pendingSeed=null;}const run=()=>{const date=parseDateInput(input.value);if(!date||Number.isNaN(date.getTime())){status.textContent='Could not parse the input.';status.className='status-line error';output.innerHTML='';return;}const tz = -date.getTimezoneOffset();const sign=tz>=0?'+':'-';const hh=String(Math.floor(Math.abs(tz)/60)).padStart(2,'0');const mm=String(Math.abs(tz)%60).padStart(2,'0');const localIso=`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}T${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}:${String(date.getSeconds()).padStart(2,'0')}${sign}${hh}:${mm}`;const vals=[['ISO 8601 (UTC)', date.toISOString()],['ISO 8601 (local offset)', localIso],['UNIX seconds', Math.floor(date.getTime()/1000)],['UNIX milliseconds', date.getTime()]];output.innerHTML=vals.map(([k,v])=>`<div class="kv-row"><div class="kv-key">${escapeHtml(String(k))}</div><div class="kv-value">${escapeHtml(String(v))}</div></div>`).join('');status.textContent='';status.className='status-line';};const live=debounce(run);$('#isoRun').onclick=run;input.addEventListener('input',live);run();}
+
+    function renderDateDiff(){return `<div class="field-grid"><div class="field"><label for="dateDiffStart">Start</label><input class="input code" id="dateDiffStart" value="2026-01-01T00:00:00Z"></div><div class="field"><label for="dateDiffEnd">End</label><input class="input code" id="dateDiffEnd" value="2026-12-31T00:00:00Z"></div><div class="field full"><div class="button-row"><button class="button primary" id="dateDiffRun" type="button">Calculate</button></div><div class="status-line" id="dateDiffStatus"></div><div class="kv-list" id="dateDiffOutput"></div></div></div>`;}
+    function initDateDiff(){const start=$('#dateDiffStart'),end=$('#dateDiffEnd'),status=$('#dateDiffStatus'),output=$('#dateDiffOutput');const run=()=>{const a=parseDateInput(start.value),b=parseDateInput(end.value);if(!a||!b||Number.isNaN(a)||Number.isNaN(b)){status.textContent='Enter two valid dates.';status.className='status-line error';output.innerHTML='';return;}const ms=b.getTime()-a.getTime();const vals=[['Milliseconds', ms],['Seconds', (ms/1000).toFixed(3)],['Minutes', (ms/60000).toFixed(3)],['Hours', (ms/3600000).toFixed(3)],['Days', (ms/86400000).toFixed(3)],['Weeks', (ms/604800000).toFixed(3)]];output.innerHTML=vals.map(([k,v])=>`<div class="kv-row"><div class="kv-key">${escapeHtml(String(k))}</div><div class="kv-value">${escapeHtml(String(v))}</div></div>`).join('');status.textContent=ms>=0?'End is after start.':'End is before start.';status.className='status-line ok';};$('#dateDiffRun').onclick=run;run();}
+
+    function renderHmac(){return `<div class="field-grid"><div class="field"><label for="hmacAlgorithm">Algorithm</label><select class="select" id="hmacAlgorithm"><option>SHA-256</option><option>SHA-512</option></select></div><div class="field"><label for="hmacKey">Secret key</label><input class="input code" id="hmacKey" value="secret"></div><div class="field full"><label for="hmacInput">Message</label><textarea class="textarea code" id="hmacInput" spellcheck="false">hello</textarea><div class="button-row"><button class="button primary" id="hmacRun" type="button">Calculate</button></div>${copyResultHeader()}<div class="output-box" id="hmacOutput">—</div><div class="status-line" id="hmacStatus"></div></div></div>`;}
+    function initHmac(){const alg=$('#hmacAlgorithm'),key=$('#hmacKey'),input=$('#hmacInput'),output=$('#hmacOutput'),status=$('#hmacStatus');const run=async()=>{try{if(!crypto.subtle)throw new Error('Web Crypto API is unavailable in this context.');const cryptoKey=await crypto.subtle.importKey('raw',new TextEncoder().encode(key.value),{name:'HMAC',hash:{name:alg.value}},false,['sign']);const sig=await crypto.subtle.sign('HMAC',cryptoKey,new TextEncoder().encode(input.value));output.textContent=[...new Uint8Array(sig)].map(x=>x.toString(16).padStart(2,'0')).join('');status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};$('#hmacRun').onclick=run;run();setupCopyButton(()=>output.textContent);}
+
+    function renderHttpStatus(){return `<div class="field-grid"><div class="field"><label for="httpStatusInput">Code or search</label><input class="input code" id="httpStatusInput" value="429"></div><div class="field" style="align-self:end"><div class="button-row"><button class="button primary" id="httpStatusRun" type="button">Search</button></div></div><div class="field full"><div class="status-line" id="httpStatusStatus"></div><div class="match-list" id="httpStatusOutput"></div></div></div>`;}
+    function initHttpStatus(){const input=$('#httpStatusInput'),status=$('#httpStatusStatus'),output=$('#httpStatusOutput');const run=()=>{const q=input.value.trim().toLowerCase();const items=Object.entries(HTTP_STATUS_MAP).filter(([code,text])=>code.includes(q)||text.toLowerCase().includes(q));output.innerHTML=items.length?items.map(([code,text])=>`<div class="match-item"><strong>${code}</strong> ${escapeHtml(text)}</div>`).join(''):`<div class="match-item">No matching HTTP status found.</div>`;status.textContent=`${items.length} match(es)`;status.className='status-line';};$('#httpStatusRun').onclick=run;run();}
+
+    function renderCidr(){return `<div class="field-grid"><div class="field full"><label for="cidrInput">IPv4 / CIDR</label><input class="input code" id="cidrInput" value="192.168.1.10/24"></div><div class="field full"><div class="button-row"><button class="button primary" id="cidrRun" type="button">Calculate</button></div><div class="status-line" id="cidrStatus"></div><div class="kv-list" id="cidrOutput"></div></div></div>`;}
+    function initCidr(){const input=$('#cidrInput'),status=$('#cidrStatus'),output=$('#cidrOutput');const run=()=>{try{const m=input.value.trim().match(/^([^/]+)\/(\d{1,2})$/);if(!m)throw new Error('Enter IPv4/prefix, for example 192.168.1.10/24');const ip=ipv4ToInt(m[1]);const prefix=Number(m[2]);if(prefix<0||prefix>32)throw new Error('Prefix must be between 0 and 32.');const mask=prefix===0?0:(0xFFFFFFFF << (32-prefix)) >>> 0;const network=ip & mask;const broadcast=(network | (~mask >>> 0)) >>> 0;const first=prefix>=31?network:network+1;const last=prefix>=31?broadcast:broadcast-1;const hosts=prefix===32?1:prefix===31?2:Math.max(0,2**(32-prefix)-2);const vals=[['Network',intToIpv4(network)],['Netmask',intToIpv4(mask)],['Broadcast',intToIpv4(broadcast)],['First host',intToIpv4(first >>> 0)],['Last host',intToIpv4(last >>> 0)],['Host count',hosts]];output.innerHTML=vals.map(([k,v])=>`<div class="kv-row"><div class="kv-key">${escapeHtml(String(k))}</div><div class="kv-value">${escapeHtml(String(v))}</div></div>`).join('');status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';output.innerHTML='';}};const live=debounce(run);$('#cidrRun').onclick=run;input.addEventListener('input',live);run();}
+
+    function renderColor(){return `<div class="field-grid"><div class="field"><label for="colorInput">Color</label><input class="input code" id="colorInput" value="#16624f"></div><div class="field" style="align-self:end"><div class="button-row"><button class="button primary" id="colorRun" type="button">Convert</button></div></div><div class="field full"><div class="status-line" id="colorStatus"></div><div class="metric-grid"><div class="metric" style="display:flex;align-items:center;justify-content:center"><div id="colorPreview" style="width:100%;height:52px;border-radius:10px;border:1px solid var(--line)"></div></div><div class="metric"><span class="metric-value" id="colorHex">—</span><span class="metric-label">HEX</span></div><div class="metric"><span class="metric-value" id="colorRgb">—</span><span class="metric-label">RGB</span></div><div class="metric"><span class="metric-value" id="colorHsl">—</span><span class="metric-label">HSL</span></div></div></div></div>`;}
+    function initColor(){const input=$('#colorInput'),status=$('#colorStatus');const run=()=>{try{let rgb=parseHexColor(input.value)||parseRgbString(input.value);if(!rgb){const m=input.value.trim().match(/^hsl\((\d+),\s*(\d+)%?,\s*(\d+)%?\)$/i);if(m)rgb=hslToRgb({h:Number(m[1]),s:Number(m[2]),l:Number(m[3])});}if(!rgb)throw new Error('Enter a HEX, RGB, or HSL color.');const hsl=rgbToHsl(rgb);$('#colorPreview').style.background=rgbToHex(rgb);$('#colorHex').textContent=rgbToHex(rgb);$('#colorRgb').textContent=`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;$('#colorHsl').textContent=`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;status.textContent='';status.className='status-line';}catch(e){status.textContent=String(e.message||e);status.className='status-line error';}};const live=debounce(run);$('#colorRun').onclick=run;input.addEventListener('input',live);run();}
+
+    function renderPxRem(){return `<div class="field-grid"><div class="field"><label for="pxRemBase">Base font size</label><input class="input code" id="pxRemBase" value="16"></div><div class="field"><label for="pxValue">px</label><input class="input code" id="pxValue" value="24"></div><div class="field"><label for="remValue">rem</label><input class="input code" id="remValue" value="1.5"></div><div class="field full"><div class="button-row"><button class="button primary" id="pxToRem" type="button">px → rem</button><button class="button" id="remToPx" type="button">rem → px</button></div><div class="status-line" id="pxRemStatus"></div></div></div>`;}
+    function initPxRem(){const base=$('#pxRemBase'),px=$('#pxValue'),rem=$('#remValue'),status=$('#pxRemStatus');let direction='px';const toRem=()=>{direction='px';const b=Number(base.value),p=Number(px.value);if(!b||!Number.isFinite(p))return status.textContent='Enter valid numbers.';rem.value=(p/b).toFixed(4).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');status.textContent=`${px.value}px = ${rem.value}rem`;};const toPx=()=>{direction='rem';const b=Number(base.value),r=Number(rem.value);if(!b||!Number.isFinite(r))return status.textContent='Enter valid numbers.';px.value=(r*b).toFixed(4).replace(/\.0+$/,'').replace(/(\.\d*?)0+$/,'$1');status.textContent=`${rem.value}rem = ${px.value}px`;};const live=debounce(()=>direction==='px'?toRem():toPx());$('#pxToRem').onclick=toRem;$('#remToPx').onclick=toPx;px.addEventListener('input',()=>{direction='px';live();});rem.addEventListener('input',()=>{direction='rem';live();});base.addEventListener('input',live);toRem();}
+
+    function renderCssTools(){return `<div class="field-grid"><div class="field"><label for="cssShadowX">Shadow X</label><input class="input code" id="cssShadowX" value="0"></div><div class="field"><label for="cssShadowY">Shadow Y</label><input class="input code" id="cssShadowY" value="10"></div><div class="field"><label for="cssShadowBlur">Blur</label><input class="input code" id="cssShadowBlur" value="24"></div><div class="field"><label for="cssRadius">Border radius</label><input class="input code" id="cssRadius" value="16"></div><div class="field"><label for="cssShadowColor">Color</label><input class="input code" id="cssShadowColor" value="rgba(0,0,0,0.18)"></div><div class="field full"><div class="button-row"><button class="button primary" id="cssToolsRun" type="button">Preview</button></div><div style="margin-top:12px;padding:24px;border:1px dashed var(--line);border-radius:12px;background:var(--surface-muted)"><div id="cssToolsPreview" style="height:120px;border:1px solid var(--line);background:#fff"></div></div>${copyResultHeader('CSS')}<div class="output-box" id="cssToolsOutput"></div></div></div>`;}
+    function initCssTools(){const run=()=>{const x=Number($('#cssShadowX').value)||0,y=Number($('#cssShadowY').value)||0,blur=Number($('#cssShadowBlur').value)||0,radius=Number($('#cssRadius').value)||0,color=$('#cssShadowColor').value||'rgba(0,0,0,0.18)';const css=`box-shadow: ${x}px ${y}px ${blur}px ${color};\nborder-radius: ${radius}px;`;const preview=$('#cssToolsPreview');preview.style.boxShadow=`${x}px ${y}px ${blur}px ${color}`;preview.style.borderRadius=`${radius}px`;$('#cssToolsOutput').textContent=css;};$('#cssToolsRun').onclick=run;run();setupCopyButton(()=>$('#cssToolsOutput').textContent);}
+
+    const initMap={base64:initBase64,'url-codec':initUrlCodec,'html-entity':initEntity,unicode:initUnicode,hex:initHex,'data-uri':initDataUri,json:initJson,yaml:initYaml,csv:initCsv,'json-diff':initJsonDiff,jsonpath:initJsonPath,case:initCase,'sort-lines':initSortLines,deduplicate:initDeduplicate,text:initText,escape:initEscape,timestamp:initTimestamp,iso8601:initIso8601,'date-diff':initDateDiff,cron:initCron,jwt:initJwt,hash:initHash,hmac:initHmac,random:initRandom,regex:initRegex,uuid:initUuid,'url-parser':initUrlParser,'http-status':initHttpStatus,'number-base':initNumberBase,cidr:initCidr,color:initColor,'px-rem':initPxRem,'css-tools':initCssTools};
+    function initTool(id){initMap[id]?.();}
+
+    function applyLanguage() {
+      const state=captureWorkspaceState(); document.documentElement.lang=language; document.title=language==='ja'?(APP_CONFIG.nameJa||APP_CONFIG.name):APP_CONFIG.name;
+      $$('[data-i18n]').forEach(el=>{el.textContent=t(el.dataset.i18n);}); $$('[data-i18n-title]').forEach(el=>{el.title=t(el.dataset.i18nTitle);}); $$('[data-i18n-aria-label]').forEach(el=>{el.setAttribute('aria-label',t(el.dataset.i18nAriaLabel));}); $$('[data-i18n-placeholder]').forEach(el=>{el.placeholder=t(el.dataset.i18nPlaceholder);});
+      $('#languageButton').textContent=language==='ja'?'EN':'日本語'; $('#languageButton').setAttribute('aria-label',language==='ja'?'Switch to English':'日本語に切り替え'); $('#brandName').textContent=language==='ja'?(APP_CONFIG.nameJa||APP_CONFIG.name):APP_CONFIG.name; $('#footerName').textContent=$('#brandName').textContent; const brandMetaEl=$('#brandMeta'); if(brandMetaEl) brandMetaEl.textContent = language==='ja' ? `${tools.length} tools · ローカル処理 · 単一HTML` : `${tools.length} tools · local only · single HTML`; if($('#toolPickerDialog').open) $('#toolPickerTitle').textContent=pickerMode==='transfer'?t('sendResultTitle'):t('searchTools');
+      renderCurrentTool(state); refreshToolBrowsers(); renderSmartSuggestions();
+    }
+
+    $('#languageButton').addEventListener('click',()=>{language=language==='ja'?'en':'ja';writeStorage(storageKeys.language,language);applyLanguage();});
+    $('#smartInput').addEventListener('input',renderSmartSuggestions); $('#smartClear').addEventListener('click',()=>{$('#smartInput').value='';renderSmartSuggestions();$('#smartInput').focus();});
+    $('#toolSearch').addEventListener('input',()=>{keyboardSelection.set('toolList',-1);renderToolList($('#toolList'),$('#toolSearch').value);}); $('#pickerSearch').addEventListener('input',()=>{keyboardSelection.set('pickerList',-1);renderToolList($('#pickerList'),$('#pickerSearch').value);});
+    $('#toolSearch').addEventListener('keydown',e=>handleSearchKeydown(e,$('#toolList'),$('#toolSearch'))); $('#pickerSearch').addEventListener('keydown',e=>handleSearchKeydown(e,$('#pickerList'),$('#pickerSearch')));
+    document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openToolPicker('open');}});
+    $('#workspaceFavorite').addEventListener('click',()=>toggleFavorite(currentToolId));
+    $('#mobileToolsButton').addEventListener('click',()=>openToolPicker('open')); $('#closeToolPicker').addEventListener('click',()=>{$('#toolPickerDialog').close();resetPickerMode();}); $('#toolPickerDialog').addEventListener('close',resetPickerMode); $('#toolPickerDialog').addEventListener('click',e=>{const d=e.currentTarget,r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();});
+    const help=$('#helpDialog'); $('#helpButton').addEventListener('click',()=>help.showModal()); $('#closeHelpButton').addEventListener('click',()=>help.close()); help.addEventListener('click',e=>{const r=help.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)help.close();});
+    $('#resetPersonalization').addEventListener('click',async()=>{const ok=await AppConfirm.ask({title:t('resetTitle'),message:t('resetMessage'),confirmLabel:t('resetAction'),cancelLabel:t('cancel'),tone:'danger'});if(!ok)return;favorites=[];writeStorage(storageKeys.favorites,'[]');refreshToolBrowsers();showToast(t('resetDone'));});
+    window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(toolMap[id]&&id!==currentToolId){saveCurrentToolState();currentToolId=id;renderCurrentTool();refreshToolBrowsers();requestAnimationFrame(scrollToWorkspaceHeader);}});
+
+    $('#versionBadge').textContent=`v${APP_CONFIG.version}`; $('#buildVersion').textContent=APP_CONFIG.version; $('#builtAt').textContent=BUILD_MANIFEST.generatedAtUtc||'—'; $('#dependencyCount').textContent=String(BUILD_MANIFEST.dependencies?.length||0);
+    const hashId=location.hash.slice(1); if(toolMap[hashId])currentToolId=hashId; else history.replaceState(null,'',`#${currentToolId}`); applyLanguage();
+  })();
+  </script>
+</body>
+</html>

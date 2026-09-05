@@ -1,0 +1,22 @@
+{
+  "$schema": "./schemas/app-config.schema.json",
+  "name": "Developer Toolbox",
+  "nameJa": "Developer Toolbox",
+  "slug": "httpapps-developer-toolbox",
+  "version": "1.1.0",
+  "description": "A local-first developer toolbox for Base64, JSON, JWT, cron, regex, timestamps, hashes, and other small utilities.",
+  "descriptionJa": "Base64、JSON、JWT、cron、正規表現、UNIX timestamp、Hashなどを1つにまとめたローカル処理の開発者ツールボックスです。",
+  "defaultLanguage": "auto",
+  "repository": {
+    "owner": "ttomohisa",
+    "name": "httpapps-developer-toolbox"
+  },
+  "build": {
+    "output": "dist/index.html",
+    "blockRuntimeNetwork": true,
+    "selfExtract": {
+      "enabled": true,
+      "output": "dist/index.self-extract.html"
+    }
+  }
+}
