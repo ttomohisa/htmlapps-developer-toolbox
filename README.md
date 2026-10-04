@@ -78,6 +78,14 @@ Python, Node.js, and a local web server are not required. The builder uses Windo
 5. Star frequently used tools to also show them in **Favorites**.
 6. Move between tools freely. Input is kept only in memory for the current tab, so returning to a tool restores the in-progress value until the page is reloaded.
 
+### Safe conversion behavior
+
+- Hex accepts complete UTF-8 byte pairs, with optional `0x` prefixes and whitespace, comma, colon, or hyphen separators. Invalid characters, incomplete bytes, and invalid UTF-8 are rejected.
+- JSON string unescape requires a JSON string, including its double quotes.
+- Hex, Unicode, URL, Data URI, and Escape clear stale output after input changes or errors. Result actions stay disabled until a valid non-empty result is ready.
+- Decoded Data URI results contain the payload only. MIME appears separately and populates the encoding controls, so Copy, Send, and Swap do not add a MIME label to your data.
+- URL component/full mode stays selected when changing tools or language within the current tab.
+
 ### Command palette and keyboard navigation
 
 | Shortcut | Action |
@@ -134,7 +142,7 @@ Run:
 build-standalone.bat
 ```
 
-For the full repository checks used by GitHub Actions:
+For the full repository checks used by GitHub Actions, install Node.js 22 or newer (Node.js is not needed to build or run the app):
 
 ```powershell
 ./scripts/check-repository.ps1
@@ -143,6 +151,8 @@ For the full repository checks used by GitHub Actions:
 The build and verification process:
 
 - Generates the single-HTML app from `src/index.template.html`
+- Synchronizes the tracked `developer-toolbox.html` download with `dist/index.html` for default builds; explicit `-OutputPath` builds leave it unchanged
+- Runs dependency-free Node regression tests on source and generated releases during repository checks
 - Embeds configured dependency assets when `dependencies.json` contains any
 - Rejects unresolved template placeholders and invalid build output
 - Verifies the standalone HTML does not rely on external runtime resources

@@ -138,3 +138,12 @@ Developer Toolbox groups these tasks into one offline-capable toolbox. In a sess
 - Lightweight conversion tools update through a short debounce while keeping their explicit action buttons.
 - `Ctrl/Cmd + K` opens the picker as a command palette. Search uses English terms, Japanese aliases, descriptions, and tool IDs with relevance ranking.
 - Arrow Up/Down changes the highlighted search result, Enter opens it, and Escape clears the query or closes the palette.
+
+## Safe conversion round trips
+
+- Hex decoding accepts complete hexadecimal byte pairs, contiguous or separated by whitespace, commas, colons, or hyphens. Each group may have a `0x` prefix. Reject any other character, incomplete byte, or invalid UTF-8 instead of silently dropping it.
+- JSON string unescape accepts only a parsed JSON string, never an object, array, number, boolean, or null.
+- Hex, Unicode, URL, Data URI, and Escape clear prior output immediately when input/options change and on conversion errors; Copy, Send, and Swap are disabled until a valid non-empty result exists. A literal em dash is payload, never an empty-state marker. Explicit conversion cancels pending live work so a subsequent Swap is not overwritten. UTF-8 decoding preserves a leading BOM as content.
+- Data URI decoded output is payload only. MIME metadata is shown separately and restored to the MIME/encoding controls for re-encoding. No metadata is injected into Copy, Send, or Swap.
+- URL component/full mode survives tool navigation and language changes through the existing in-memory form state. Reload still resets work.
+- Default builds generate `developer-toolbox.html` as an exact byte-for-byte copy of `dist/index.html`. Custom `-OutputPath` builds do not rewrite that alias.

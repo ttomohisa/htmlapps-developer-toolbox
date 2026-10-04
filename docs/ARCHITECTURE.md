@@ -39,7 +39,8 @@ The starter includes `components/confirm-dialog.html` and exposes the matching `
 10. Gzip that HTML, embed it into a small ASCII-only native `DecompressionStream` loader, inherit the readable HTML favicon, and write `dist/index.self-extract.html`.
 11. Verify that the loader stays ASCII-only and embedded-only, the favicon matches the readable HTML, and the gzip payload restores byte-for-byte.
 12. Write both manifests plus `dist/.nojekyll`.
-13. Reject the declared unresolved build placeholders and common external runtime resource references.
+13. For default builds, copy the readable release to the tracked `developer-toolbox.html` alias and verify its SHA-256. Custom output builds leave the alias unchanged.
+14. Reject the declared unresolved build placeholders and common external runtime resource references.
 
 ## Build placeholders
 
