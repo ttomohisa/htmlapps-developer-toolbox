@@ -305,6 +305,16 @@ if (-not $SkipSelfExtract -and ($appConfig.build.PSObject.Properties.Name -conta
   }
 }
 
+# Keep the tracked one-file download in sync only for the default release build.
+# Explicit -OutputPath builds are intentionally isolated from the root download.
+if (-not $OutputPathWasSpecified) {
+  $downloadPath = Join-Path $Root "developer-toolbox.html"
+  [System.IO.File]::Copy($OutputPath, $downloadPath, $true)
+  if ((Get-Sha256FileHex $downloadPath) -ne (Get-Sha256FileHex $OutputPath)) {
+    throw "The root download does not match the readable release."
+  }
+}
+
 $outputHash = Get-Sha256FileHex $OutputPath
 $outputSizeMb = [Math]::Round((Get-Item $OutputPath).Length / 1MB, 2)
 Write-Host ""

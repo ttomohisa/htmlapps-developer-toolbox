@@ -109,4 +109,20 @@ $buildArguments = @{}
 if ($ForceDownload) { $buildArguments.ForceDownload = $true }
 & (Join-Path $Root "build-standalone.ps1") @buildArguments
 
+# Node is required for repository regression tests, not for standalone builds or runtime.
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) { throw "Node.js 22 or newer is required for repository regression tests." }
+$nodeMajor = [int]((& node --version).TrimStart('v').Split('.')[0])
+if ($nodeMajor -lt 22) { throw "Node.js 22 or newer is required for repository regression tests." }
+$testFiles = @(Get-ChildItem -Path (Join-Path $Root "tests") -Filter "*.test.mjs" | ForEach-Object { $_.FullName })
+& node --test @testFiles
+if ($LASTEXITCODE -ne 0) { throw "Regression tests failed." }
+$previousAppHtml = $env:APP_HTML
+try {
+  foreach ($html in @("dist/index.html", "developer-toolbox.html")) {
+    $env:APP_HTML = Join-Path $Root $html
+    & node --test (Join-Path $Root "tests/conversions.test.mjs")
+    if ($LASTEXITCODE -ne 0) { throw "Built conversion tests failed for $html." }
+  }
+} finally { $env:APP_HTML = $previousAppHtml }
+
 Write-Host "[OK] Repository check passed." -ForegroundColor Green

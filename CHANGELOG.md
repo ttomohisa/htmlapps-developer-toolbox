@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Reject malformed Hex input and non-string JSON unescape values instead of silently changing their data.
+- Clear stale conversion output/actions on edits and errors, cancel pending live conversions before explicit actions, and preserve literal em-dash and leading UTF-8 BOM payloads.
+- Separate decoded Data URI payloads from MIME metadata and preserve MIME/encoding for round trips.
+- Preserve URL component/full mode within the tab across navigation and language changes.
+- Generate the tracked root download with the release build and verify byte parity; add source/release regression tests to repository checks.
+
+
 ## 1.1.0 - 2026-08-20
 
 - Rename the repository/slug to `httpapps-developer-toolbox` and migrate legacy language/favorite settings automatically.
