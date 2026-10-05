@@ -92,8 +92,10 @@ Python, Node.js, and a local web server are not required. The builder uses Windo
 | --- | --- |
 | `Ctrl` / `⌘` + `K` | Open the tool search palette |
 | `↑` / `↓` | Move through search results |
-| `Enter` | Open the selected tool |
+| `Enter` | Open the top search match, or the result selected with arrows |
 | `Esc` | Clear the current search or close the palette |
+
+Nonempty searches show each tool once in relevance order and highlight the top match automatically. Favorites do not override an exact match. With an empty search, the usual Favorites/categories remain; select a row with arrows before pressing Enter. No-result queries do nothing, and IME composition keys do not trigger navigation. Send to tool uses the same search behavior, limited to tools that can accept the result.
 
 Search supports both English and Japanese aliases, for example `regex` / `正規表現`, `hash` / `ハッシュ`, and `CIDR` / `サブネット`.
 

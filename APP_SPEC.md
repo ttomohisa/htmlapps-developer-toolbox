@@ -137,7 +137,10 @@ Developer Toolbox groups these tasks into one offline-capable toolbox. In a sess
 - Each tool's form values are stored only in an in-memory `Map` for the lifetime of the current page. Reloading clears them.
 - Lightweight conversion tools update through a short debounce while keeping their explicit action buttons.
 - `Ctrl/Cmd + K` opens the picker as a command palette. Search uses English terms, Japanese aliases, descriptions, and tool IDs with relevance ranking.
-- Arrow Up/Down changes the highlighted search result, Enter opens it, and Escape clears the query or closes the palette.
+- Nonempty sidebar and palette searches show each matching tool once in relevance order, independent of favorite/category grouping. The best match is highlighted automatically and Enter opens it immediately; Arrow Up/Down chooses another result.
+- Empty or whitespace-only search keeps the existing Favorites and category sections without an automatic selection. Enter does nothing until an arrow key explicitly selects a row. No-result queries never open a tool.
+- Escape clears the query or closes the palette. IME composing key events (`isComposing` or legacy key code 229) must not open a tool, change selection, clear the query, or close the palette.
+- Reopening the palette with a retained nonempty query preserves quick-open behavior. Transfer mode searches only tools that accept a seed value and passes the existing payload in memory.
 
 ## Safe conversion round trips
 
