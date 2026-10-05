@@ -120,8 +120,8 @@ $previousAppHtml = $env:APP_HTML
 try {
   foreach ($html in @("dist/index.html", "developer-toolbox.html")) {
     $env:APP_HTML = Join-Path $Root $html
-    & node --test (Join-Path $Root "tests/conversions.test.mjs")
-    if ($LASTEXITCODE -ne 0) { throw "Built conversion tests failed for $html." }
+    & node --test (Join-Path $Root "tests/conversions.test.mjs") (Join-Path $Root "tests/navigation.test.mjs")
+    if ($LASTEXITCODE -ne 0) { throw "Built runtime tests failed for $html." }
   }
 } finally { $env:APP_HTML = $previousAppHtml }
 

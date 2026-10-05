@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add ranked quick-open: nonempty sidebar and palette searches highlight the best unique match for immediate Enter; arrows select alternatives. Keep Favorites/categories when search is empty.
+- Ignore IME composition keys before tool navigation, selection, or Escape handling, including the legacy key-code 229 path and the global palette shortcut. Prevent the native Escape default when clearing the palette query.
+- Add navigation, transfer, draft/history/language, and storage regression coverage to source and generated-release checks.
+
 - Reject malformed Hex input and non-string JSON unescape values instead of silently changing their data.
 - Clear stale conversion output/actions on edits and errors, cancel pending live conversions before explicit actions, and preserve literal em-dash and leading UTF-8 BOM payloads.
 - Separate decoded Data URI payloads from MIME metadata and preserve MIME/encoding for round trips.
