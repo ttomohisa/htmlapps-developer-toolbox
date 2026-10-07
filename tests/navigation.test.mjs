@@ -189,3 +189,29 @@ for (const flag of [{ isComposing: true }, { keyCode: 229 }]) for (const modifie
     assert.equal(h.searchFor('pickerList').value, 'json'); assert.deepEqual(h.opens, []); assert.equal(e.prevented, false);
   });
 }
+
+
+for (const lang of ['ja', 'en']) {
+  test(`${lang} header uses localized EN/JA destination controls and accurate privacy/help labels`, () => {
+    const h = harness({ language: lang });
+    const translations = source.slice(source.indexOf('    const translations = {'), source.indexOf('    const icons = {'));
+    h.run(translations + '\n' + extract('t'));
+    const privacy = h.node('#privacyForTest'), helpTitle = h.node('#helpTitleForTest');
+    privacy.dataset.i18n = 'localOnly'; helpTitle.dataset.i18n = 'helpTitle';
+    const originalQuery = h.context.$$;
+    h.context.$$ = selector => selector === '[data-i18n]' ? [privacy, helpTitle] : originalQuery(selector);
+    h.node('#base64Input').value = '日本語 😀 draft';
+    h.run('applyLanguage()');
+    const destination = lang === 'ja' ? '英語に切り替え' : 'Switch to Japanese';
+    assert.deepEqual({
+      label: h.node('#languageButton').textContent, aria: h.node('#languageButton')['aria-label'],
+      title: h.node('#languageButton').title, privacy: privacy.textContent, help: helpTitle.textContent
+    }, {
+      label: lang === 'ja' ? 'EN' : 'JA', aria: destination, title: destination,
+      privacy: lang === 'ja' ? '完全ローカル処理' : 'Fully local processing',
+      help: lang === 'ja' ? '使い方と注意事項' : 'How to use & notes'
+    });
+    assert.equal(h.node('#base64Input').value, '日本語 😀 draft');
+    assert.deepEqual(h.writes, []);
+  });
+}

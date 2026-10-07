@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 - 2026-10-07
+
+- Standardize EN / JA language targets, localized accessible names/tooltips, and the bilingual fully-local-processing badge.
+- Clear stale CSV conversion results on edits or failures and disable Copy, Send, and Swap until a valid result exists.
+- Correct canonical repository/demo links while preserving the legacy storage slug and saved favorites.
+
 ## Unreleased
 
 - Add ranked quick-open: nonempty sidebar and palette searches highlight the best unique match for immediate Enter; arrows select alternatives. Keep Favorites/categories when search is empty.
