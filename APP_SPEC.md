@@ -3,8 +3,8 @@
 ## 1. Product identity
 
 - **Name:** Developer Toolbox
-- **Repository:** `ttomohisa/httpapps-developer-toolbox`
-- **Version:** 1.0.0
+- **Repository:** `ttomohisa/htmlapps-developer-toolbox`
+- **Version:** 1.1.1
 - **Purpose:** Put the small developer conversions people repeatedly search for on the web into one local-first single HTML app.
 - **Primary users:** Web developers, application developers, operators, and anyone who frequently inspects encoded or structured text.
 - **Release artifacts:** `dist/index.html` and `dist/index.self-extract.html`
@@ -104,7 +104,9 @@ Developer Toolbox groups these tasks into one offline-capable toolbox. In a sess
 
 - Light-only interface matching the Browser-Kitty single-HTML template.
 - Japanese and English in the same HTML.
-- Compact upper-right language and help controls.
+- Compact upper-right EN / JA destination language control, with target-language accessible name and tooltip localized in the current language, beside Help.
+- The privacy badge reads `完全ローカル処理` / `Fully local processing`.
+- Keep the legacy `httpapps-developer-toolbox` storage slug so existing language and favorites remain available.
 - Inline SVG iconography; no emoji as primary controls.
 - Desktop and 320px smartphone layouts are first-class.
 - Visible keyboard focus, labels, native controls, and reduced-motion support are required.
@@ -146,7 +148,7 @@ Developer Toolbox groups these tasks into one offline-capable toolbox. In a sess
 
 - Hex decoding accepts complete hexadecimal byte pairs, contiguous or separated by whitespace, commas, colons, or hyphens. Each group may have a `0x` prefix. Reject any other character, incomplete byte, or invalid UTF-8 instead of silently dropping it.
 - JSON string unescape accepts only a parsed JSON string, never an object, array, number, boolean, or null.
-- Hex, Unicode, URL, Data URI, and Escape clear prior output immediately when input/options change and on conversion errors; Copy, Send, and Swap are disabled until a valid non-empty result exists. A literal em dash is payload, never an empty-state marker. Explicit conversion cancels pending live work so a subsequent Swap is not overwritten. UTF-8 decoding preserves a leading BOM as content.
+- CSV, Hex, Unicode, URL, Data URI, and Escape clear prior output immediately when input/options change and on conversion errors; Copy, Send, and Swap are disabled until a valid non-empty result exists. A literal em dash is payload, never an empty-state marker. Explicit conversion cancels pending live work so a subsequent Swap is not overwritten. UTF-8 decoding preserves a leading BOM as content.
 - Data URI decoded output is payload only. MIME metadata is shown separately and restored to the MIME/encoding controls for re-encoding. No metadata is injected into Copy, Send, or Swap.
 - URL component/full mode survives tool navigation and language changes through the existing in-memory form state. Reload still resets work.
 - Default builds generate `developer-toolbox.html` as an exact byte-for-byte copy of `dist/index.html`. Custom `-OutputPath` builds do not rewrite that alias.

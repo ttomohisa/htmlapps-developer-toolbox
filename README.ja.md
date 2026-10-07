@@ -1,8 +1,8 @@
 # Developer Toolbox
 
-[![GitHub Pages](https://github.com/ttomohisa/httpapps-developer-toolbox/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/httpapps-developer-toolbox/actions/workflows/deploy-pages.yml)
+[![GitHub Pages](https://github.com/ttomohisa/htmlapps-developer-toolbox/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-developer-toolbox/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/httpapps-developer-toolbox/)
+[![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
 
 [English README](README.md)
 
@@ -10,11 +10,11 @@
 
 ## 🚀 Live demo
 
-### [Developer Toolbox を GitHub Pages で開く](https://ttomohisa.github.io/httpapps-developer-toolbox/)
+### [Developer Toolbox を GitHub Pages で開く](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
 
 GitHub Pagesから最初のHTMLだけを取得します。読み込み後の変換・解析・検証・生成・Hash計算などはブラウザー内で処理され、各ツールへ入力した内容をアプリが外部へ送信することはありません。
 
-[![Developer Toolboxの画面](assets/screenshot.png)](https://ttomohisa.github.io/httpapps-developer-toolbox/)
+[![Developer Toolboxの画面](assets/screenshot.png)](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
 
 ## 主な機能
 
@@ -49,15 +49,15 @@ GitHub Pagesから最初のHTMLだけを取得します。読み込み後の変�
 
 ### Web版を使う
 
-[GitHub Pagesのデモ](https://ttomohisa.github.io/httpapps-developer-toolbox/)を開くだけで使えます。インストールやアカウント登録は不要です。
+[GitHub Pagesのデモ](https://ttomohisa.github.io/htmlapps-developer-toolbox/)を開くだけで使えます。インストールやアカウント登録は不要です。
 
 ### HTMLをダウンロードして使う
 
-1. このリポジトリの [`dist/index.html`](https://github.com/ttomohisa/httpapps-developer-toolbox/blob/main/dist/index.html) をダウンロードします。
+1. このリポジトリの [`developer-toolbox.html`](developer-toolbox.html)（通常版の生成済みHTML）をダウンロードします。
 2. Chromium系ブラウザー、Firefox、Safariなどの現在のブラウザーで開きます。
 3. 任意の場所へ保存しておけば、必要なときにそのHTMLを開くだけで利用できます。
 
-ファイルサイズを小さくして配布したい場合は、同じアプリをgzip圧縮して内包した [`dist/index.self-extract.html`](https://github.com/ttomohisa/httpapps-developer-toolbox/blob/main/dist/index.self-extract.html) も利用できます。
+ローカルでビルドすると、同じアプリをgzip圧縮して内包した小さい `dist/index.self-extract.html` も生成されます。
 
 ### 完全オフライン版をビルドする（上級者向け）
 
@@ -70,6 +70,8 @@ GitHub Pagesから最初のHTMLだけを取得します。読み込み後の変�
 Python、Node.js、ローカルWebサーバーは不要です。ビルダーはWindows PowerShellと標準の `tar.exe` を使用します。現時点では第三者ランタイム依存もありません。
 
 ## 使い方
+
+ヘッダーの EN / JA で表示言語を切り替えます。
 
 1. **Smart Input** へ値を貼り付けるか、PC左側の一覧 / スマホのツール選択画面から使いたい機能を開きます。
 2. 処理したい値を入力または貼り付けます。
@@ -95,10 +97,10 @@ Python、Node.js、ローカルWebサーバーは不要です。ビルダーはW
 
 このリポジトリには、単一HTMLをビルド・検証して `dist/` をGitHub Pagesへ自動デプロイするWorkflowを含めています。
 
-1. GitHubへ `httpapps-developer-toolbox` としてpushします。
+1. GitHubへ `htmlapps-developer-toolbox` としてpushします。
 2. **Settings → Pages → Build and deployment → Source** で **GitHub Actions** を選択します。
 3. `main` へpushするか、Actionsから **Deploy standalone app to GitHub Pages** を手動実行します。
-4. デプロイ完了後、`https://ttomohisa.github.io/httpapps-developer-toolbox/` で利用できます。
+4. デプロイ完了後、`https://ttomohisa.github.io/htmlapps-developer-toolbox/` で利用できます。
 
 `main` へのpushでは、デプロイ前にリポジトリ検証を実行します。アプリ本体やビルド関連ファイルを変更するPull Requestでも、単一HTMLのビルド検証Workflowが実行されます。
 
@@ -198,7 +200,7 @@ Copyright © 2026 ttomohisa
 
 - HexはUTF-8の2桁単位のバイト列です。`0x`接頭辞、空白・カンマ・コロン・ハイフン区切りに対応し、不正文字・不完全なバイト・不正なUTF-8をエラーにします。
 - JSON文字列のアンエスケープは、ダブルクォートで囲まれたJSON文字列だけを受け付けます。
-- Hex・Unicode・URL・Data URI・Escapeは、入力やオプションの変更時、変換エラー時に古い結果を消去します。有効な空でない結果が出るまでコピー・送信・入替は無効です。
+- CSV・Hex・Unicode・URL・Data URI・Escapeは、入力やオプションの変更時、変換エラー時に古い結果を消去します。有効な空でない結果が出るまでコピー・送信・入替は無効です。
 - Data URIのデコード結果は本文だけです。MIMEは別表示してエンコード設定にも反映するため、コピー・送信・入替にMIMEラベルが混ざりません。
 - URLのcomponent/fullモードはツールや言語を切り替えてもタブ内で保持します。再読込すると作業内容はリセットされます。
 - 標準ビルドでルートの`developer-toolbox.html`も生成し、`dist/index.html`とバイト単位で一致させます。`-OutputPath`指定時はルートのファイルを変更しません。

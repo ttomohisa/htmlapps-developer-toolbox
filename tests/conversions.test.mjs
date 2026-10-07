@@ -4,7 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const source = fs.readFileSync(process.env.APP_HTML || new URL('../src/index.template.html', import.meta.url), 'utf8');
-const names = ['debounce', 'normalizedResult', 'setupCopyButton', 'swapInputOutput', 'createConversionResult', 'textToHex', 'hexToText', 'decodeUnicodeEscapes', 'utf8ToBase64', 'base64ToUtf8', 'initHex', 'initUnicode', 'initDataUri', 'initEscape', 'initUrlCodec'];
+const names = ['debounce', 'normalizedResult', 'setupCopyButton', 'swapInputOutput', 'createConversionResult', 'textToHex', 'hexToText', 'decodeUnicodeEscapes', 'utf8ToBase64', 'base64ToUtf8', 'initHex', 'initUnicode', 'initDataUri', 'initEscape', 'initUrlCodec', 'safeJson', 'parseCsv', 'stringifyCsv', 'initCsv'];
 function extract(name) {
   const start = source.indexOf('    function ' + name + '(');
   if (start < 0) return '';
@@ -168,4 +168,37 @@ for (const payload of ['\ufeffhi', '\ufeff', '\ufeff日本語 😀']) test(`UTF-
   assert.equal(h.node('#hexOutput').textContent, payload);
   const uri = harness('initDataUri', { '#dataUriInput': `data:text/plain;base64,${Buffer.from(payload).toString('base64')}` });
   assert.equal(uri.node('#dataUriOutput').textContent, payload);
+});
+
+
+for (const [trigger, valid, invalid, expected] of [
+  ['#csvToCsv', '[{"id":"001","name":"猫"}]', '{"broken"', 'id,name\n001,猫'],
+  ['#csvToCsv', '[{"id":"001","name":"猫"}]', '{}', 'id,name\n001,猫'],
+  ['#csvToJson', 'id,name\n001,猫', '', '[\n  {\n    "id": "001",\n    "name": "猫"\n  }\n]']
+]) {
+  test(`CSV ${trigger} clears failed results and disables actions, then recovers from ${JSON.stringify(invalid)}`, () => {
+    const h = harness('initCsv', { '#csvInput': valid });
+    h.click(trigger); assert.equal(h.node('#csvOutput').textContent, expected);
+    h.click(action('copy')); h.click(action('send'));
+    assert.equal(h.copied.at(-1), expected); assert.equal(h.sent.at(-1), expected);
+    h.node('#csvInput').value = invalid; h.click(trigger);
+    assert.equal(h.node('#csvStatus').className, 'status-line error');
+    assert.equal(h.node('#csvOutput').textContent, '');
+    for (const kind of ['copy', 'send', 'swap']) { assert.equal(h.node(action(kind)).disabled, true); h.click(action(kind)); }
+    assert.equal(h.copied.length, 1); assert.equal(h.sent.length, 1); assert.equal(h.node('#csvInput').value, invalid);
+    h.node('#csvInput').value = valid; h.click(trigger);
+    assert.equal(h.node('#csvOutput').textContent, expected);
+    for (const kind of ['copy', 'send', 'swap']) assert.equal(h.node(action(kind)).disabled, false);
+  });
+}
+test('CSV edits immediately invalidate the previous result until explicitly converted', () => {
+  const h = harness('initCsv', { '#csvInput': '[{"value":"—"}]' });
+  for (const kind of ['copy', 'send', 'swap']) assert.equal(h.node(action(kind)).disabled, true);
+  h.click('#csvToCsv'); assert.equal(h.node('#csvOutput').textContent, 'value\n—');
+  h.node('#csvInput').value = '[{"value":"new"}]'; h.node('#csvInput').emit('input');
+  assert.equal(h.node('#csvOutput').textContent, '');
+  for (const kind of ['copy', 'send', 'swap']) assert.equal(h.node(action(kind)).disabled, true);
+  h.click('#csvToCsv'); assert.equal(h.node('#csvOutput').textContent, 'value\nnew');
+  h.click(action('swap')); assert.equal(h.node('#csvInput').value, 'value\nnew');
+  h.click('#csvToJson'); assert.deepEqual(JSON.parse(h.node('#csvOutput').textContent), [{ value: 'new' }]);
 });

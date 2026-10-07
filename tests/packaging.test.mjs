@@ -17,3 +17,12 @@ test('inline JavaScript parses in source, readable release, and root download', 
     }
   }
 });
+
+
+test('initial version badge matches canonical release metadata before initialization', () => {
+  const config = JSON.parse(fs.readFileSync(path.join(root, 'app.config.json'), 'utf8'));
+  for (const file of ['src/index.template.html', 'dist/index.html', 'developer-toolbox.html']) {
+    const html = fs.readFileSync(path.join(root, file), 'utf8');
+    assert.equal(html.match(/id="versionBadge">v([^<]+)</)[1], config.version, file);
+  }
+});

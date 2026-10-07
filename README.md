@@ -1,8 +1,8 @@
 # Developer Toolbox
 
-[![GitHub Pages](https://github.com/ttomohisa/httpapps-developer-toolbox/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/httpapps-developer-toolbox/actions/workflows/deploy-pages.yml)
+[![GitHub Pages](https://github.com/ttomohisa/htmlapps-developer-toolbox/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-developer-toolbox/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/httpapps-developer-toolbox/)
+[![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
 
 [日本語版 README](README.ja.md)
 
@@ -10,11 +10,11 @@ A privacy-focused, single-HTML developer toolbox for Base64, JSON, JWT, cron, re
 
 ## 🚀 Live demo
 
-### [Open Developer Toolbox on GitHub Pages](https://ttomohisa.github.io/httpapps-developer-toolbox/)
+### [Open Developer Toolbox on GitHub Pages](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
 
 GitHub Pages delivers the initial HTML. After it loads, conversion, parsing, validation, generation, hashing, and other utility processing run locally in your browser. Values entered into the tools are not uploaded by the app.
 
-[![Developer Toolbox screenshot](assets/screenshot.png)](https://ttomohisa.github.io/httpapps-developer-toolbox/)
+[![Developer Toolbox screenshot](assets/screenshot.png)](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
 
 ## Features
 
@@ -28,7 +28,7 @@ GitHub Pages delivers the initial HTML. After it loads, conversion, parsing, val
 - `Ctrl` / `⌘` + `K` command palette with keyboard navigation
 - Favorite tools appear in a Favorites section while remaining in their original categories
 - Deep links such as `#base64`, `#jwt`, `#cron`, and `#regex`
-- Japanese and English UI in the same HTML
+- Japanese and English UI in the same HTML, switched with EN / JA in the header
 - Responsive desktop and mobile layouts
 - Embedded SVG favicon and no remote runtime assets
 - No third-party runtime libraries
@@ -49,15 +49,15 @@ GitHub Pages delivers the initial HTML. After it loads, conversion, parsing, val
 
 ### Use the web demo
 
-Just [open the demo](https://ttomohisa.github.io/httpapps-developer-toolbox/). No installation or account is required.
+Just [open the demo](https://ttomohisa.github.io/htmlapps-developer-toolbox/). No installation or account is required.
 
 ### Use the downloaded HTML
 
-1. Download [`dist/index.html`](https://github.com/ttomohisa/httpapps-developer-toolbox/blob/main/dist/index.html) from this repository.
+1. Download [`developer-toolbox.html`](developer-toolbox.html), the tracked readable release, from this repository.
 2. Open it in a current Chromium-based browser, Firefox, or Safari.
 3. Keep the file anywhere you like and open it again when you need a developer utility.
 
-For a smaller distributable file, [`dist/index.self-extract.html`](https://github.com/ttomohisa/httpapps-developer-toolbox/blob/main/dist/index.self-extract.html) contains the same app as a gzip-compressed self-extracting HTML.
+A local build also generates `dist/index.self-extract.html`, the same app as a smaller gzip-compressed self-extracting HTML.
 
 ### Build it fully offline (advanced)
 
@@ -82,7 +82,7 @@ Python, Node.js, and a local web server are not required. The builder uses Windo
 
 - Hex accepts complete UTF-8 byte pairs, with optional `0x` prefixes and whitespace, comma, colon, or hyphen separators. Invalid characters, incomplete bytes, and invalid UTF-8 are rejected.
 - JSON string unescape requires a JSON string, including its double quotes.
-- Hex, Unicode, URL, Data URI, and Escape clear stale output after input changes or errors. Result actions stay disabled until a valid non-empty result is ready.
+- CSV, Hex, Unicode, URL, Data URI, and Escape clear stale output after input changes or errors. Result actions stay disabled until a valid non-empty result is ready.
 - Decoded Data URI results contain the payload only. MIME appears separately and populates the encoding controls, so Copy, Send, and Swap do not add a MIME label to your data.
 - URL component/full mode stays selected when changing tools or language within the current tab.
 
@@ -103,10 +103,10 @@ Search supports both English and Japanese aliases, for example `regex` / `正規
 
 The repository includes a workflow that builds the standalone HTML, verifies it, and deploys `dist/` to GitHub Pages automatically.
 
-1. Push the repository to GitHub as `httpapps-developer-toolbox`.
+1. Push the repository to GitHub as `htmlapps-developer-toolbox`.
 2. Open **Settings → Pages → Build and deployment → Source** and select **GitHub Actions**.
 3. Push to `main`, or manually run **Deploy standalone app to GitHub Pages** from the Actions tab.
-4. After a successful deployment, the demo is available at `https://ttomohisa.github.io/httpapps-developer-toolbox/`.
+4. After a successful deployment, the demo is available at `https://ttomohisa.github.io/htmlapps-developer-toolbox/`.
 
 Each push to `main` runs the repository checks before deployment. Pull requests that change the app or build files also run the standalone build validation workflow.
 
