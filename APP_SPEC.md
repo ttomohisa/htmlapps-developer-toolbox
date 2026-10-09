@@ -4,7 +4,7 @@
 
 - **Name:** Developer Toolbox
 - **Repository:** `ttomohisa/htmlapps-developer-toolbox`
-- **Version:** 1.1.2
+- **Version:** 1.1.3
 - **Purpose:** Put the small developer conversions people repeatedly search for on the web into one local-first single HTML app.
 - **Primary users:** Web developers, application developers, operators, and anyone who frequently inspects encoded or structured text.
 - **Release artifacts:** `dist/index.html` and `dist/index.self-extract.html`
@@ -101,6 +101,8 @@ Developer Toolbox groups these tasks into one offline-capable toolbox. In a sess
 - Regex uses the browser JavaScript RegExp engine; pathological expressions may consume significant CPU time.
 
 ## 8. UX and accessibility
+
+- The supplied 64×64 rounded green SVG in `assets/favicon.svg` is shared exactly by the header and embedded favicons in every generated release variant.
 
 - Light-only interface matching the Browser-Kitty single-HTML template.
 - Japanese and English in the same HTML.
