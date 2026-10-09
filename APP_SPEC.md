@@ -4,7 +4,7 @@
 
 - **Name:** Developer Toolbox
 - **Repository:** `ttomohisa/htmlapps-developer-toolbox`
-- **Version:** 1.1.1
+- **Version:** 1.1.2
 - **Purpose:** Put the small developer conversions people repeatedly search for on the web into one local-first single HTML app.
 - **Primary users:** Web developers, application developers, operators, and anyone who frequently inspects encoded or structured text.
 - **Release artifacts:** `dist/index.html` and `dist/index.self-extract.html`
