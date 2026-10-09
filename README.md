@@ -14,7 +14,7 @@ A privacy-focused, single-HTML developer toolbox for Base64, JSON, JWT, cron, re
 
 GitHub Pages delivers the initial HTML. After it loads, conversion, parsing, validation, generation, hashing, and other utility processing run locally in your browser. Values entered into the tools are not uploaded by the app.
 
-[![Developer Toolbox screenshot](assets/screenshot.png)](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
+[![Developer Toolbox screenshot](assets/screenshot-en.png)](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
 
 ## Features
 
