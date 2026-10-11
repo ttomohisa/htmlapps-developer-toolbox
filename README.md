@@ -1,5 +1,7 @@
 # Developer Toolbox
 
+Native dialogs pause background page scrolling while open; existing Help and tool-picker layouts are preserved.
+
 [![GitHub Pages](https://github.com/ttomohisa/htmlapps-developer-toolbox/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/ttomohisa/htmlapps-developer-toolbox/actions/workflows/deploy-pages.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Single HTML](https://img.shields.io/badge/distribution-single%20HTML-0ea5e9)](https://ttomohisa.github.io/htmlapps-developer-toolbox/)
