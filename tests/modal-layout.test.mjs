@@ -9,9 +9,9 @@ function assertLock(html) {
   assert.match(html, /html:has\(dialog:modal\),\s*body:has\(dialog:modal\)\s*\{\s*overflow:\s*hidden;?\s*\}/);
 }
 test('native modal lock covers both background scroll containers', () => assertLock(source));
-test('Help documents temporary background locking in JA and EN', () => {
-  assert.match(source, /ダイアログを開いている間は背景のスクロールが止まります。/);
-  assert.match(source, /Background scrolling is paused while a dialog is open\./);
+test('Help excludes layout audit prose in JA and EN', () => {
+  assert.doesNotMatch(source, /ダイアログを開いている間は背景のスクロールが止まります。/);
+  assert.doesNotMatch(source, /Background scrolling is paused while a dialog is open\./);
 });
 test('all generated variants retain the modal lock and source Help markup', () => {
   const readable = read('dist/index.html'), root = read('developer-toolbox.html');
