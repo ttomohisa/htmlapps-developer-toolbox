@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.4 - 2026-10-11
+
+- Lock page background scrolling while native dialogs are open, preserving existing dialog layouts and conversion behavior.
+- Document the temporary scroll lock in Japanese and English Help and add source/generated regression checks.
+
 ## 1.1.3 - 2026-10-09
 
 - Replace the header icon and favicon with the supplied rounded green SVG artwork, preserving the existing responsive icon dimensions.
