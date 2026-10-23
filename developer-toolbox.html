@@ -218,6 +218,7 @@
     .build-item strong { display:block; margin-top:2px; overflow-wrap:anywhere; font-size:10px; }
     footer { width:min(1180px,100%); margin:0 auto; padding:0 clamp(14px,2.8vw,30px) 28px; color:var(--muted); font-size:11px; }
     @media (max-width: 860px) {
+      footer { display:none; }
       .app-layout { grid-template-columns:1fr; }
       .tool-browser { display:none; }
       .mobile-tools-button { display:inline-flex; align-items:center; gap:6px; }
@@ -365,14 +366,7 @@
     </div>
     <!-- APP:END -->
 
-    <details class="build-details">
-      <summary data-i18n="buildInfo">ビルド情報</summary>
-      <div class="build-grid">
-        <div class="build-item"><span data-i18n="appVersion">アプリバージョン</span><strong id="buildVersion">—</strong></div>
-        <div class="build-item"><span data-i18n="builtAt">ビルド日時</span><strong id="builtAt">—</strong></div>
-        <div class="build-item"><span data-i18n="dependencies">内包依存</span><strong id="dependencyCount">0</strong></div>
-      </div>
-    </details>
+
   </main>
 
   <footer><span id="footerName">Developer Toolbox</span> · MIT License · <span data-i18n="footer">local-first developer toolbox</span></footer>
@@ -437,6 +431,14 @@
         <li data-i18n="helpNoteHash">ファイルHashはファイル全体をブラウザーのメモリへ読み込んで計算します。非常に大きなファイルでは端末負荷が高くなります。</li>
       </ul>
       <p class="dialog-note" data-i18n="helpOffline">実行時通信はCSPで遮断しています。通常版とgzip自己解凍版のどちらも単一HTMLとしてローカルで利用できます。</p>
+      <details class="build-details">
+        <summary data-i18n="buildInfo">ビルド情報</summary>
+        <div class="build-grid">
+          <div class="build-item"><span data-i18n="appVersion">アプリバージョン</span><strong id="buildVersion">—</strong></div>
+          <div class="build-item"><span data-i18n="builtAt">ビルド日時</span><strong id="builtAt">—</strong></div>
+          <div class="build-item"><span data-i18n="dependencies">内包依存</span><strong id="dependencyCount">0</strong></div>
+        </div>
+      </details>
       <!-- APP:HELP:END -->
     </div>
   </dialog>
@@ -446,7 +448,7 @@
     'use strict';
 
     const APP_CONFIG = {"$schema":"./schemas/app-config.schema.json","name":"Developer Toolbox","nameJa":"Developer Toolbox","slug":"httpapps-developer-toolbox","version":"1.1.4","description":"A local-first developer toolbox for Base64, JSON, JWT, cron, regex, timestamps, hashes, and other small utilities.","descriptionJa":"Base64、JSON、JWT、cron、正規表現、UNIX timestamp、Hashなどを1つにまとめたローカル処理の開発者ツールボックスです。","defaultLanguage":"auto","repository":{"owner":"ttomohisa","name":"htmlapps-developer-toolbox"},"build":{"output":"dist/index.html","blockRuntimeNetwork":true,"selfExtract":{"enabled":true,"output":"dist/index.self-extract.html"}}};
-    const BUILD_MANIFEST = {"schemaVersion":1,"builder":"single-html-app-template/1.0","generatedAtUtc":"2026-10-11T22:17:22.3417258Z","app":{"name":"Developer Toolbox","slug":"httpapps-developer-toolbox","version":"1.1.4"},"dependencies":[]};
+    const BUILD_MANIFEST = {"schemaVersion":1,"builder":"single-html-app-template/1.0","generatedAtUtc":"2026-10-23T09:57:05.1624969Z","app":{"name":"Developer Toolbox","slug":"httpapps-developer-toolbox","version":"1.1.4"},"dependencies":[]};
     const EMBEDDED_ASSET_BUNDLE_BASE64 = 'eyJzY2hlbWFWZXJzaW9uIjoxLCJkZXBlbmRlbmNpZXMiOnt9fQ==';
 
     function decodeBase64Bytes(base64) {
@@ -1274,7 +1276,7 @@
     document.addEventListener('keydown',e=>{if(e.isComposing||e.keyCode===229)return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openToolPicker('open');}});
     $('#workspaceFavorite').addEventListener('click',()=>toggleFavorite(currentToolId));
     $('#mobileToolsButton').addEventListener('click',()=>openToolPicker('open')); $('#closeToolPicker').addEventListener('click',()=>{$('#toolPickerDialog').close();resetPickerMode();}); $('#toolPickerDialog').addEventListener('close',resetPickerMode); $('#toolPickerDialog').addEventListener('click',e=>{const d=e.currentTarget,r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close();});
-    const help=$('#helpDialog'); $('#helpButton').addEventListener('click',()=>help.showModal()); $('#closeHelpButton').addEventListener('click',()=>help.close()); help.addEventListener('click',e=>{const r=help.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)help.close();});
+    const help=$('#helpDialog'); $('#helpButton').addEventListener('click',()=>help.showModal()); $('#closeHelpButton').addEventListener('click',()=>help.close()); help.addEventListener('click',e=>{if(e.target!==help)return;const r=help.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)help.close();});
     $('#resetPersonalization').addEventListener('click',async()=>{const ok=await AppConfirm.ask({title:t('resetTitle'),message:t('resetMessage'),confirmLabel:t('resetAction'),cancelLabel:t('cancel'),tone:'danger'});if(!ok)return;favorites=[];writeStorage(storageKeys.favorites,'[]');refreshToolBrowsers();showToast(t('resetDone'));});
     window.addEventListener('hashchange',()=>{const id=location.hash.slice(1);if(toolMap[id]&&id!==currentToolId){saveCurrentToolState();currentToolId=id;renderCurrentTool();refreshToolBrowsers();requestAnimationFrame(scrollToWorkspaceHeader);}});
 
