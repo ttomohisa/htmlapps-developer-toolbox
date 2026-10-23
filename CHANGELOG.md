@@ -22,6 +22,8 @@
 
 ## Unreleased
 
+- Hide the informational footer in the existing mobile tool-picker layout and move build details to the end of Help, preserving keyboard disclosure and native close routes.
+
 - Add ranked quick-open: nonempty sidebar and palette searches highlight the best unique match for immediate Enter; arrows select alternatives. Keep Favorites/categories when search is empty.
 - Ignore IME composition keys before tool navigation, selection, or Escape handling, including the legacy key-code 229 path and the global palette shortcut. Prevent the native Escape default when clearing the palette query.
 - Add navigation, transfer, draft/history/language, and storage regression coverage to source and generated-release checks.

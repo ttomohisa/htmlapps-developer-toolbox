@@ -154,3 +154,5 @@ Developer Toolbox groups these tasks into one offline-capable toolbox. In a sess
 - Data URI decoded output is payload only. MIME metadata is shown separately and restored to the MIME/encoding controls for re-encoding. No metadata is injected into Copy, Send, or Swap.
 - URL component/full mode survives tool navigation and language changes through the existing in-memory form state. Reload still resets work.
 - Default builds generate `developer-toolbox.html` as an exact byte-for-byte copy of `dist/index.html`. Custom `-OutputPath` builds do not rewrite that alias.
+
+- Hide only the informational footer at the existing 860px tool-picker breakpoint. Keep the existing build details at the end of Help on all screen sizes, retaining their IDs and keyboard disclosure behavior.
