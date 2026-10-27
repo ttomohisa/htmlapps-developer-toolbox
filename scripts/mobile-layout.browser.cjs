@@ -52,7 +52,7 @@ async function main() {
   const browser = await chromium.launch();
   try {
     const cases = [];
-    for (const language of ['ja','en']) for (const [width,height] of [[1360,900],[cfg.phone+1,568],[cfg.phone,568],[320,568],[393,252]]) cases.push({file:'dist/index.html',language,width,height});
+    for (const language of ['ja','en']) for (const [width,height] of [[1360,900],[cfg.phone+1,568],[cfg.phone,568],[320,568],[360,640],[390,844],[393,252]]) cases.push({file:'dist/index.html',language,width,height});
     cases.push({file:'dist/index.self-extract.html',language:'en',width:360,height:640});
     cases.push({file:cfg.slug+'.html',language:'ja',width:1360,height:900});
     for (const {file,language,width,height} of cases) {
@@ -84,6 +84,11 @@ async function main() {
         if (file === 'dist/index.html' && [1360,320].includes(width)) await page.screenshot({path:path.join(evidence,`${language}-${width}.png`)});
         await page.locator('#helpButton').click();
         const body = page.locator('#helpDialog .dialog-body');
+        const helpText = await body.innerText();
+        assert.doesNotMatch(helpText, /(?:EN\s*\/\s*JA|ヘッダー[^。]*言語[^。]*切り替|Use EN[^.]*switch)/, label + ': redundant language instructions removed');
+        const smartInputStep = page.locator('#helpDialog [data-i18n="helpStep1"]');
+        assert.equal(await smartInputStep.isVisible(), true, label + ': Smart Input guidance visible');
+        assert.match(await smartInputStep.innerText(), language === 'ja' ? /Smart Input.*形式.*候補/ : /Smart Input.*format.*suggested tools/, label + ': Smart Input guidance retained');
         if (cfg.build) {
           assert.equal(await page.locator('main #buildVersion, footer #buildVersion').count(),0, label + ': build metadata left main/footer');
           assert.match(await page.locator('#buildVersion').textContent(),/\d/);

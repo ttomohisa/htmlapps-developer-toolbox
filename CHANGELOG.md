@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.5 - 2026-10-27
+
+- Remove redundant language-switching instructions from Japanese and English Help while retaining Smart Input guidance.
+
 ## 1.1.4 - 2026-10-11
 
 - Lock page background scrolling while native dialogs are open, preserving existing dialog layouts and conversion behavior.
