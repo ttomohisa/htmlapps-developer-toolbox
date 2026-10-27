@@ -47,6 +47,35 @@ async function controls(page, width, height, label) {
     if (width <= cfg.phone) await bounds(page.locator('.control-dock'), width, height, label);
   }
 }
+// Check rendered geometry, including clipping by an ancestor (isVisible alone misses it).
+async function auditHeader(page, label) {
+  const badge = page.locator('header #versionBadge');
+  assert.equal(await badge.textContent(), 'v' + require('../app.config.json').version, label + ': current header version');
+  assert.equal(await badge.isVisible(), true, label + ': version visible');
+  const clipped = await badge.evaluate(el => {
+    const r = el.getBoundingClientRect(), problems = [];
+    if (r.width <= 0 || r.height <= 0 || r.left < -1 || r.right > innerWidth + 1 || r.top < -1 || r.bottom > innerHeight + 1) problems.push('outside viewport');
+    if (el.scrollWidth > el.clientWidth + 1) problems.push('version text clipped');
+    for (let p = el.parentElement; p; p = p.parentElement) {
+      const s = getComputedStyle(p), b = p.getBoundingClientRect();
+      if (/hidden|clip|auto|scroll/.test(s.overflowX) && (r.left < b.left - 1 || r.right > b.right + 1)) problems.push('ancestor clips x: ' + p.className);
+      if (/hidden|clip|auto|scroll/.test(s.overflowY) && (r.top < b.top - 1 || r.bottom > b.bottom + 1)) problems.push('ancestor clips y: ' + p.className);
+    }
+    return problems;
+  });
+  assert.deepEqual(clipped, [], label + ': complete header version remains readable');
+  const help = page.locator('#helpButton svg');
+  assert.equal(await help.isVisible(), true, label + ': Help icon visible');
+  assert.ok(await help.evaluate(svg => {
+    const paths = [...svg.querySelectorAll('path')], shape = paths.map(p => p.getAttribute('d')).join(' ');
+    return /[aAcC]/.test(shape) && paths.some(p => /[hH]\.01/.test(p.getAttribute('d')) && getComputedStyle(p).strokeLinecap === 'round') && svg.getBBox().width > 0;
+  }), label + ': question-mark curve and painted dot, not information icon');
+  const shield = page.locator('.local-badge svg');
+  if (await shield.count()) {
+    assert.ok(await shield.evaluate(svg => [...svg.querySelectorAll('path')].some(p => /^M12 3 5 6/.test(p.getAttribute('d')))), label + ': local-processing shield');
+  }
+}
+
 async function main() {
   fs.mkdirSync(evidence, {recursive:true});
   const browser = await chromium.launch();
@@ -82,6 +111,7 @@ async function main() {
         assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), label + ': page width');
         if (cfg.slug === 'pocket-level' && width <= cfg.phone) await bounds(page.locator('.control-dock'),width,height,label);
         if (file === 'dist/index.html' && [1360,320].includes(width)) await page.screenshot({path:path.join(evidence,`${language}-${width}.png`)});
+        await auditHeader(page, label);
         await page.locator('#helpButton').click();
         const body = page.locator('#helpDialog .dialog-body');
         const helpText = await body.innerText();
