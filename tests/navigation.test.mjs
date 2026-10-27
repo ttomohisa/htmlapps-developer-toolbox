@@ -17,7 +17,7 @@ function extract(name) {
 const toolDefinitions = source.slice(source.indexOf('    const tools = ['), source.indexOf('\n    function toolDescription'));
 const aliasDefinitions = source.slice(source.indexOf('    const toolAliases = {'), source.indexOf('\n    function toolAliasText'));
 const seedDefinitions = source.split('\n').find(line => line.startsWith('    const seedSelectors='));
-const names = ['persistFavorites','loadFavorites','renderUiStatus','translateWorkspace','resetFavorites','initHash','initHmac','setupCopyButton','copyText','toolDescription', 'toolAliasText', 'toolSearchScore', 'toolSearchMatch', 'starSvg', 'toolRow', 'renderToolList', 'refreshToolBrowsers', 'toggleFavorite', 'updateWorkspaceFavorite', 'captureWorkspaceState', 'saveCurrentToolState', 'restoreWorkspaceState', 'applyPendingSeed', 'renderCurrentTool', 'resetPickerMode', 'openToolPicker', 'openTransferPicker', 'setKeyboardSelection', 'handleSearchKeydown', 'openTool', 'normalizedResult', 'applyLanguage', 'readStorage', 'writeStorage', 'readJson'];
+const names = ['setCryptoError','persistFavorites','loadFavorites','renderUiStatus','translateWorkspace','resetFavorites','initHash','initHmac','setupCopyButton','copyText','toolDescription', 'toolAliasText', 'toolSearchScore', 'toolSearchMatch', 'starSvg', 'toolRow', 'renderToolList', 'refreshToolBrowsers', 'toggleFavorite', 'updateWorkspaceFavorite', 'captureWorkspaceState', 'saveCurrentToolState', 'restoreWorkspaceState', 'applyPendingSeed', 'renderCurrentTool', 'resetPickerMode', 'openToolPicker', 'openTransferPicker', 'setKeyboardSelection', 'handleSearchKeydown', 'openTool', 'normalizedResult', 'applyLanguage', 'readStorage', 'writeStorage', 'readJson'];
 function harness({ favorites = [], language = 'en' } = {}) {
   const nodes = new Map(), pushes = [], writes = [], storage = new Map(), windowEvents = {}, documentEvents = {}, opens = [];
   let fields = [], rowSequence = 0;
@@ -264,4 +264,14 @@ test('clipboard fallback removes textarea after thrown copy, restores only owned
 test('language resolution honors URL, common, legacy and ordered browser choices without writes',()=>{
  const h=harness();h.storage.set('legacy','ja');const opts={url:'https://example.test/?lang=en',storage:h.context.localStorage,legacyKeys:['legacy'],languages:['fr','ja-JP','en-US']};
  assert.equal(BrowserKittyUI.resolveLanguage(opts),'en');opts.url='https://example.test/?lang=wrong';assert.equal(BrowserKittyUI.resolveLanguage(opts),'ja');h.storage.set(BrowserKittyUI.languageKey,'en');assert.equal(BrowserKittyUI.resolveLanguage(opts),'en');h.storage.clear();assert.equal(BrowserKittyUI.resolveLanguage(opts),'ja');assert.deepEqual(h.writes,[]);
+});
+
+test('delayed clipboard rejection restores fallback-time focus after the user moved away from Copy',async()=>{
+ const h=harness();let reject;h.context.navigator={clipboard:{writeText:()=>new Promise((_,r)=>reject=r)}};const first=h.node('#copyCsvButton'),later=h.node('#helpButton');first.focus=()=>h.context.document.activeElement=first;later.focus=()=>h.context.document.activeElement=later;first.focus();let removed=0;
+ h.context.document.body={append(){}};h.context.document.createElement=()=>({style:{},focus(){h.context.document.activeElement=this},select(){},remove(){removed++}});h.context.document.execCommand=()=>false;
+ const pending=h.run("copyText('snapshot')");later.focus();reject(Error('denied'));await pending;assert.strictEqual(h.context.document.activeElement,later);assert.equal(removed,1);
+});
+for(const [init,button,statusId,inputId] of [['initHash','#hashCalculate','#hashStatus','#hashText'],['initHmac','#hmacRun','#hmacStatus','#hmacInput']])test(`${init} persistent failure relocalizes to JA while retaining raw engine detail and current work`,async()=>{
+ const h=harness();h.run(extract('t'));h.node(inputId).value='retain secret';h.node('#hashAlgorithm').value='SHA-256';h.node('#hmacAlgorithm').value='SHA-256';h.node('#hmacKey').value='key';h.context.crypto.subtle={digest:async()=>{throw Error('engine detail')},importKey:async()=>{throw Error('engine detail')}};h.run(init+'()');if(init==='initHash')await h.node(button).onclick();else await new Promise(r=>setImmediate(r));
+ const status=h.node(statusId);assert.match(status.textContent,/Processing failed/);status.childNodes=[{nodeType:3,get textContent(){return status.textContent},set textContent(v){status.textContent=v}}];status.hasAttribute=()=>false;h.node('#workspaceBody').querySelectorAll=()=>[status];h.context.language='ja';h.run("translateWorkspace('en')");assert.match(status.textContent,/処理できません/);assert.match(status.textContent,/engine detail/);assert.equal(h.node(inputId).value,'retain secret');
 });

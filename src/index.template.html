@@ -598,9 +598,9 @@
     function formatNumber(n) { return new Intl.NumberFormat(language).format(n); }
     function showToast(message) { const toast=$('#toast'); toast.textContent=message; toast.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>toast.classList.remove('show'),1600); }
     async function copyText(text) {
-      const prior=document.activeElement; let ok=false;
+      let ok=false;
       try { await navigator.clipboard.writeText(text); ok=true; } catch {
-        const area=document.createElement('textarea'); area.value=text; area.style.position='fixed'; area.style.opacity='0';
+        const prior=document.activeElement,area=document.createElement('textarea'); area.value=text; area.style.position='fixed'; area.style.opacity='0';
         try { document.body.append(area); area.focus(); area.select(); ok=Boolean(document.execCommand('copy')); }
         catch { ok=false; }
         finally { const owned=document.activeElement===area; area.remove(); if(owned&&prior?.isConnected)prior.focus({preventScroll:true}); }
@@ -920,11 +920,11 @@
       button.onclick=async()=>{
         if(busy)return; const job=++generation,algorithm=alg.value,selected=file.files[0],value=text.value;
         if(!selected&&!value){status.textContent=t('hashEmpty');status.className='status-line error';return;}
-        busy=true; BrowserKittyUI.setButtonState(button,'busy');status.textContent=t('processing');status.className='status-line';
+        busy=true;delete status.dataset.cryptoFailure; BrowserKittyUI.setButtonState(button,'busy');status.textContent=t('processing');status.className='status-line';
         try {if(!crypto.subtle)throw Error(t('hashUnavailable'));const data=selected?await selected.arrayBuffer():new TextEncoder().encode(value);const hash=await crypto.subtle.digest(algorithm,data);
           if(job!==generation||!out.isConnected)return;out.textContent=[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');out.classList.remove('empty');
           status.textContent=selected?selected.name+' · '+formatBytes(selected.size):'';status.className='status-line ok';$('#resultScope').dataset.previous='';$('#resultScope').textContent=t('resultScope');
-        }catch(e){if(job===generation&&out.isConnected){status.textContent=t('processingFailed')+' '+String(e.message||e);status.className='status-line error';}}
+        }catch(e){if(job===generation&&out.isConnected){setCryptoError(status,e);}}
         finally {busy=false;BrowserKittyUI.setButtonState(button,'ready');refresh();}
       };
     }
@@ -1311,10 +1311,10 @@
       let busy=false,generation=0;const refresh=setupCopyButton(()=>output.textContent,null,()=>Boolean(output.textContent));
       for(const el of [alg,key,input]){el.addEventListener('input',()=>{generation++;});el.addEventListener('change',()=>{generation++;});}
       const run=async()=>{if(busy)return;const job=++generation,algorithm=alg.value,secret=key.value,value=input.value;
-        busy=true;BrowserKittyUI.setButtonState(button,'busy');status.textContent=t('processing');status.className='status-line';
+        busy=true;delete status.dataset.cryptoFailure;BrowserKittyUI.setButtonState(button,'busy');status.textContent=t('processing');status.className='status-line';
         try {if(!crypto.subtle)throw Error(t('hashUnavailable'));const cryptoKey=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:{name:algorithm}},false,['sign']);const sig=await crypto.subtle.sign('HMAC',cryptoKey,new TextEncoder().encode(value));
           if(job!==generation||!output.isConnected)return;output.textContent=[...new Uint8Array(sig)].map(x=>x.toString(16).padStart(2,'0')).join('');status.textContent='';status.className='status-line';$('#resultScope').dataset.previous='';$('#resultScope').textContent=t('resultScope');
-        }catch(e){if(job===generation&&output.isConnected){status.textContent=t('processingFailed')+' '+String(e.message||e);status.className='status-line error';}}
+        }catch(e){if(job===generation&&output.isConnected){setCryptoError(status,e);}}
         finally{busy=false;BrowserKittyUI.setButtonState(button,'ready');refresh();}
       };button.onclick=run;run();
     }
@@ -1337,11 +1337,13 @@
     const initMap={base64:initBase64,'url-codec':initUrlCodec,'html-entity':initEntity,unicode:initUnicode,hex:initHex,'data-uri':initDataUri,json:initJson,yaml:initYaml,csv:initCsv,'json-diff':initJsonDiff,jsonpath:initJsonPath,case:initCase,'sort-lines':initSortLines,deduplicate:initDeduplicate,text:initText,escape:initEscape,timestamp:initTimestamp,iso8601:initIso8601,'date-diff':initDateDiff,cron:initCron,jwt:initJwt,hash:initHash,hmac:initHmac,random:initRandom,regex:initRegex,uuid:initUuid,'url-parser':initUrlParser,'http-status':initHttpStatus,'number-base':initNumberBase,cidr:initCidr,color:initColor,'px-rem':initPxRem,'css-tools':initCssTools};
     function initTool(id){initMap[id]?.();}
 
+    function setCryptoError(status,error){status.dataset.cryptoFailure='true';status.dataset.cryptoDetail=String(error.message||error);status.textContent=t('processingFailed')+' '+status.dataset.cryptoDetail;status.className='status-line error';}
     function translateWorkspace(from) {
       const old=translations[from], next=translations[language];
       const translate=value=>{for(const key of Object.keys(old)){if(value===old[key])return next[key]??value;if(value.startsWith(old[key]+': '))return (next[key]??old[key])+value.slice(old[key].length);}return value;};
       const body=$('#workspaceBody');
       body.querySelectorAll('label,button,strong,.field-label,.field-hint,.status-line,.notice,.metric-label,option').forEach(el=>{
+        if(el.dataset.cryptoFailure){el.textContent=t('processingFailed')+' '+el.dataset.cryptoDetail;return;}
         for(const node of el.childNodes)if(node.nodeType===3)node.textContent=translate(node.textContent);
         for(const attr of ['aria-label','title','placeholder'])if(el.hasAttribute(attr))el.setAttribute(attr,translate(el.getAttribute(attr)));
       });
