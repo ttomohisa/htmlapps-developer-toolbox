@@ -918,9 +918,9 @@
       const edited=()=>{generation++;};for(const el of [text,file,alg]){el.addEventListener('input',edited);el.addEventListener('change',edited);}
       if(pendingSeed){text.value=pendingSeed;pendingSeed=null;}
       button.onclick=async()=>{
-        if(busy)return; const job=++generation,algorithm=alg.value,selected=file.files[0],value=text.value;
+        if(busy)return;clearCryptoError(status); const job=++generation,algorithm=alg.value,selected=file.files[0],value=text.value;
         if(!selected&&!value){status.textContent=t('hashEmpty');status.className='status-line error';return;}
-        busy=true;delete status.dataset.cryptoFailure; BrowserKittyUI.setButtonState(button,'busy');status.textContent=t('processing');status.className='status-line';
+        busy=true;clearCryptoError(status); BrowserKittyUI.setButtonState(button,'busy');status.textContent=t('processing');status.className='status-line';
         try {if(!crypto.subtle)throw Object.assign(Error('CRYPTO_UNAVAILABLE'),{uiKey:'hashUnavailable'});const data=selected?await selected.arrayBuffer():new TextEncoder().encode(value);const hash=await crypto.subtle.digest(algorithm,data);
           if(job!==generation||!out.isConnected)return;out.textContent=[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join('');out.classList.remove('empty');
           status.textContent=selected?selected.name+' · '+formatBytes(selected.size):'';status.className='status-line ok';$('#resultScope').dataset.previous='';$('#resultScope').textContent=t('resultScope');
@@ -1311,7 +1311,7 @@
       let busy=false,generation=0;const refresh=setupCopyButton(()=>output.textContent,null,()=>Boolean(output.textContent));
       for(const el of [alg,key,input]){el.addEventListener('input',()=>{generation++;});el.addEventListener('change',()=>{generation++;});}
       const run=async()=>{if(busy)return;const job=++generation,algorithm=alg.value,secret=key.value,value=input.value;
-        busy=true;delete status.dataset.cryptoFailure;BrowserKittyUI.setButtonState(button,'busy');status.textContent=t('processing');status.className='status-line';
+        busy=true;clearCryptoError(status);BrowserKittyUI.setButtonState(button,'busy');status.textContent=t('processing');status.className='status-line';
         try {if(!crypto.subtle)throw Object.assign(Error('CRYPTO_UNAVAILABLE'),{uiKey:'hashUnavailable'});const cryptoKey=await crypto.subtle.importKey('raw',new TextEncoder().encode(secret),{name:'HMAC',hash:{name:algorithm}},false,['sign']);const sig=await crypto.subtle.sign('HMAC',cryptoKey,new TextEncoder().encode(value));
           if(job!==generation||!output.isConnected)return;output.textContent=[...new Uint8Array(sig)].map(x=>x.toString(16).padStart(2,'0')).join('');status.textContent='';status.className='status-line';$('#resultScope').dataset.previous='';$('#resultScope').textContent=t('resultScope');
         }catch(e){if(job===generation&&output.isConnected){setCryptoError(status,e);}}
@@ -1337,6 +1337,7 @@
     const initMap={base64:initBase64,'url-codec':initUrlCodec,'html-entity':initEntity,unicode:initUnicode,hex:initHex,'data-uri':initDataUri,json:initJson,yaml:initYaml,csv:initCsv,'json-diff':initJsonDiff,jsonpath:initJsonPath,case:initCase,'sort-lines':initSortLines,deduplicate:initDeduplicate,text:initText,escape:initEscape,timestamp:initTimestamp,iso8601:initIso8601,'date-diff':initDateDiff,cron:initCron,jwt:initJwt,hash:initHash,hmac:initHmac,random:initRandom,regex:initRegex,uuid:initUuid,'url-parser':initUrlParser,'http-status':initHttpStatus,'number-base':initNumberBase,cidr:initCidr,color:initColor,'px-rem':initPxRem,'css-tools':initCssTools};
     function initTool(id){initMap[id]?.();}
 
+    function clearCryptoError(status){delete status.dataset.cryptoFailure;delete status.dataset.cryptoDetail;delete status.dataset.cryptoDetailKey;}
     function setCryptoError(status,error){status.dataset.cryptoFailure='true';status.dataset.cryptoDetail=String(error.message||error);status.dataset.cryptoDetailKey=error.uiKey==='hashUnavailable'?'hashUnavailable':'';status.textContent=t('processingFailed')+' '+(status.dataset.cryptoDetailKey?t(status.dataset.cryptoDetailKey):status.dataset.cryptoDetail);status.className='status-line error';}
     function translateWorkspace(from) {
       const old=translations[from], next=translations[language];
