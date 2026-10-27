@@ -191,6 +191,9 @@
     .picker-search { margin-bottom:9px; }
     .picker-list { max-height:calc(100dvh - 190px); overflow:auto; }
     .help-dialog { width:min(650px,calc(100% - 28px)); max-height:min(760px,calc(100dvh - 28px)); padding:0; border:1px solid var(--line); border-radius:16px; background:var(--surface); color:var(--text); box-shadow:var(--shadow-md); }
+    .help-dialog[open] { display:flex; flex-direction:column; overflow:hidden; }
+    .help-dialog .dialog-header { flex:none; }
+    .help-dialog .dialog-body { min-height:0; max-height:none; }
     .dialog-body h3 { margin:23px 0 7px; padding-top:17px; border-top:1px solid var(--line); font-size:13px; }
     .dialog-body h3:first-child { margin-top:0; padding-top:0; border-top:0; }
     .dialog-body p,.dialog-body li { color:var(--muted); font-size:12px; line-height:1.7; }
@@ -569,7 +572,7 @@
     'use strict';
 
     const APP_CONFIG = {"$schema":"./schemas/app-config.schema.json","name":"Developer Toolbox","nameJa":"Developer Toolbox","slug":"httpapps-developer-toolbox","version":"1.1.5","description":"A local-first developer toolbox for Base64, JSON, JWT, cron, regex, timestamps, hashes, and other small utilities.","descriptionJa":"Base64、JSON、JWT、cron、正規表現、UNIX timestamp、Hashなどを1つにまとめたローカル処理の開発者ツールボックスです。","defaultLanguage":"auto","repository":{"owner":"ttomohisa","name":"htmlapps-developer-toolbox"},"build":{"output":"dist/index.html","blockRuntimeNetwork":true,"selfExtract":{"enabled":true,"output":"dist/index.self-extract.html"}}};
-    const BUILD_MANIFEST = {"schemaVersion":1,"builder":"single-html-app-template/1.0","generatedAtUtc":"2026-10-27T12:59:09.6285263Z","app":{"name":"Developer Toolbox","slug":"httpapps-developer-toolbox","version":"1.1.5"},"dependencies":[]};
+    const BUILD_MANIFEST = {"schemaVersion":1,"builder":"single-html-app-template/1.0","generatedAtUtc":"2026-10-27T13:28:26.4666147Z","app":{"name":"Developer Toolbox","slug":"httpapps-developer-toolbox","version":"1.1.5"},"dependencies":[]};
     const EMBEDDED_ASSET_BUNDLE_BASE64 = 'eyJzY2hlbWFWZXJzaW9uIjoxLCJkZXBlbmRlbmNpZXMiOnt9fQ==';
 
     function decodeBase64Bytes(base64) {

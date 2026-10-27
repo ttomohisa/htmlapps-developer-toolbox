@@ -45,3 +45,16 @@ test('keyboard build-summary activation is not a backdrop click', () => {
   click({target:help,clientX:0,clientY:0});
   assert.equal(closes, 1, 'real outside backdrop clicks still close Help');
 });
+
+function assertHelpScrollOwner(html) {
+ assert.match(html,/\.help-dialog\[open\]\s*\{[^}]*display:\s*flex;[^}]*flex-direction:\s*column;[^}]*overflow:\s*hidden;?\s*\}/);
+ assert.match(html,/\.help-dialog \.dialog-header\s*\{[^}]*flex:\s*none;?\s*\}/);
+ assert.match(html,/\.help-dialog \.dialog-body\s*\{[^}]*min-height:\s*0;[^}]*max-height:\s*none;?\s*\}/);
+ // The body must shrink within the 760px dialog cap even at a 900px viewport,
+ // where its older independent viewport minus 100 limit was 800px.
+ assert.match(html,/\.dialog-body\s*\{[^}]*overflow:\s*auto;/);
+}
+test('Help reserves its header inside the dialog cap and gives remaining height to one scroll owner',()=>{
+ const wrapper=read('dist/index.self-extract.html'),payload=wrapper.match(/<script id="self-extract-payload"[^>]*>([A-Za-z0-9+/=\r\n]+)<\/script>/)[1];
+ for(const html of [source,read('dist/index.html'),read('developer-toolbox.html'),gunzipSync(Buffer.from(payload,'base64')).toString('utf8')])assertHelpScrollOwner(html);
+});
