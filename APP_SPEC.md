@@ -156,3 +156,10 @@ Developer Toolbox groups these tasks into one offline-capable toolbox. In a sess
 - Default builds generate `developer-toolbox.html` as an exact byte-for-byte copy of `dist/index.html`. Custom `-OutputPath` builds do not rewrite that alias.
 
 - Hide only the informational footer at the existing 860px tool-picker breakpoint. Keep the existing build details at the end of Help on all screen sizes, retaining their IDs and keyboard disclosure behavior.
+
+## Common UI conventions 1.0.0
+- Utility work remains tab-only. Only favorite IDs persist; startup language resolution reads URL, the common key, legacy keys, then ordered browser languages without migration writes.
+- Failed favorites reads/writes remain visible with Retry; unreadable saved data cannot be overwritten by normal favorite toggles. Reset favorites requires scope-specific confirmation and retains current work on failure.
+- Language changes translate current UI without rebuilding inputs, file selections, crypto jobs, or results. Clipboard failure keeps recovery guidance; fallback always removes its temporary textarea and restores owned focus.
+- Crypto jobs capture input/algorithm before awaiting and ignore results after source edits or navigation. Existing prior results remain available on failure.
+- Existing documented CSV/Hex/Unicode/URL/Data URI/Escape result invalidation remains an intentional exception to retaining stale results; their actions are disabled until valid output exists.

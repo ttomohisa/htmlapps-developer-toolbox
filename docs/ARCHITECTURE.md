@@ -87,3 +87,6 @@ Keep source in one HTML while it remains understandable. When an app grows subst
 - No runtime external resource.
 - Clear state ownership.
 - A build that fails on missing input.
+
+## Browser Kitty UI v1
+The builder verifies and embeds `components/ui-conventions.js` and `.css` through `scripts/embed-ui-conventions.ps1` using their lock hashes. No runtime resource is added. App-owned adapters manage favorite persistence, confirmations, clipboard cleanup and crypto generations. Translation changes existing nodes and does not restart tools.

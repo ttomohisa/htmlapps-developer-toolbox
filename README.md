@@ -205,3 +205,6 @@ Bug reports and feature proposals are welcome through GitHub Issues. See [CONTRI
 Copyright © 2026 ttomohisa
 
 Licensed under the [MIT License](LICENSE).
+
+### Common UI
+Tool work stays in this tab. Favorites save failures remain visible with Retry. Clearing Smart Input or resetting favorites asks for confirmation. Language switching retains inputs, selected files and results. Copy failures keep recovery guidance next to the workspace.

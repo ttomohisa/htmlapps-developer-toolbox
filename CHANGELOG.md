@@ -67,3 +67,6 @@
 - Renamed the app to Developer Toolbox.
 - Removed the Recent tools section and recent-tool persistence.
 - Favorites now stay in their original categories while also appearing in the Favorites section.
+
+## Unreleased
+- Integrate fixed Browser Kitty UI conventions v1 at build time; preserve tab-only work, expose favorites/clipboard failures and retry, confirm scoped deletion, preserve language-switch state, and guard asynchronous crypto output.

@@ -1,4 +1,6 @@
 import fs from 'node:fs';
+import { createRequire } from 'node:module';
+const BrowserKittyUI=createRequire(import.meta.url)('../components/ui-conventions.js');
 import vm from 'node:vm';
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -7,15 +9,15 @@ import assert from 'node:assert/strict';
 // DOM/history seam. These tests do not claim native browser or IME coverage.
 const source = fs.readFileSync(process.env.APP_HTML || new URL('../src/index.template.html', import.meta.url), 'utf8');
 function extract(name) {
-  const start = source.indexOf('    function ' + name + '(');
+  const start = source.search(new RegExp('    (?:async )?function ' + name + '\\('));
   assert.notEqual(start, -1, `Production function ${name}`);
-  const ends = ['\n    function ', '\n    const ', '\n    let ', "\n    $('#"].map(marker => source.indexOf(marker, start + 1)).filter(end => end >= 0);
+  const ends = ['\n    async function ', '\n    function ', '\n    const ', '\n    let ', "\n    $('#"].map(marker => source.indexOf(marker, start + 1)).filter(end => end >= 0);
   return source.slice(start, Math.min(...ends));
 }
 const toolDefinitions = source.slice(source.indexOf('    const tools = ['), source.indexOf('\n    function toolDescription'));
 const aliasDefinitions = source.slice(source.indexOf('    const toolAliases = {'), source.indexOf('\n    function toolAliasText'));
 const seedDefinitions = source.split('\n').find(line => line.startsWith('    const seedSelectors='));
-const names = ['toolDescription', 'toolAliasText', 'toolSearchScore', 'toolSearchMatch', 'starSvg', 'toolRow', 'renderToolList', 'refreshToolBrowsers', 'toggleFavorite', 'updateWorkspaceFavorite', 'captureWorkspaceState', 'saveCurrentToolState', 'restoreWorkspaceState', 'applyPendingSeed', 'renderCurrentTool', 'resetPickerMode', 'openToolPicker', 'openTransferPicker', 'setKeyboardSelection', 'handleSearchKeydown', 'openTool', 'normalizedResult', 'applyLanguage', 'readStorage', 'writeStorage', 'readJson'];
+const names = ['persistFavorites','loadFavorites','renderUiStatus','translateWorkspace','resetFavorites','initHash','initHmac','setupCopyButton','copyText','toolDescription', 'toolAliasText', 'toolSearchScore', 'toolSearchMatch', 'starSvg', 'toolRow', 'renderToolList', 'refreshToolBrowsers', 'toggleFavorite', 'updateWorkspaceFavorite', 'captureWorkspaceState', 'saveCurrentToolState', 'restoreWorkspaceState', 'applyPendingSeed', 'renderCurrentTool', 'resetPickerMode', 'openToolPicker', 'openTransferPicker', 'setKeyboardSelection', 'handleSearchKeydown', 'openTool', 'normalizedResult', 'applyLanguage', 'readStorage', 'writeStorage', 'readJson'];
 function harness({ favorites = [], language = 'en' } = {}) {
   const nodes = new Map(), pushes = [], writes = [], storage = new Map(), windowEvents = {}, documentEvents = {}, opens = [];
   let fields = [], rowSequence = 0;
@@ -23,7 +25,8 @@ function harness({ favorites = [], language = 'en' } = {}) {
     if (nodes.has(id)) return nodes.get(id);
     const classes = new Set(), events = new Map();
     let html = '', rows = [], stars = [];
-    const n = { id: id.replace(/^#/, ''), value: '', dataset: {}, type: 'text', checked: false, open: false, scrolls: 0,
+    const n = { id: id.replace(/^#/, ''), value: '', dataset: {}, type: 'text', checked: false, open: false, scrolls: 0, files:[], isConnected:true, disabled:false,
+      removeAttribute(key){delete this[key];},
       classList: { add: c => classes.add(c), remove: c => classes.delete(c), contains: c => classes.has(c), toggle(c, on = !classes.has(c)) { on ? classes.add(c) : classes.delete(c); } },
       setAttribute(key, value) { this[key] = value; },
       addEventListener(type, fn) { const list = events.get(type) || []; list.push(fn); events.set(type, list); },
@@ -45,7 +48,7 @@ function harness({ favorites = [], language = 'en' } = {}) {
     nodes.set(id, n); return n;
   }
   const context = {
-    favorites, language, currentToolId: 'base64', pendingSeed: null, pickerMode: 'open', transferGetter: null,
+    activeOutputObserver:null, BrowserKittyUI, favoritesLocked:false, favoritesFailure:null, favoritesDirty:false, favoritesGeneration:0, languageFailure:false, copyFailure:null, workspaceMounted:true, previousLanguage:language, AppConfirm:{refresh(){}}, favorites, language, currentToolId: 'base64', pendingSeed: null, pickerMode: 'open', transferGetter: null,
     toolSessionState: new Map(), keyboardSelection: new Map([['toolList', -1], ['pickerList', -1]]),
     icons: new Proxy({}, { get: () => '' }), t: key => key, escapeHtml: text => String(text),
     APP_CONFIG: { name: 'Developer Toolbox', slug: 'httpapps-developer-toolbox' }, storageKeys: { language: 'httpapps-developer-toolbox:language', favorites: 'httpapps-developer-toolbox:favorites' },
@@ -54,11 +57,12 @@ function harness({ favorites = [], language = 'en' } = {}) {
     window: { addEventListener: (type, fn) => { windowEvents[type] = fn; } },
     location: { hash: '#base64' }, history: { pushState(a, b, hash) { pushes.push(hash); context.location.hash = hash; } },
     localStorage: { getItem: key => storage.get(key) ?? null, setItem: (key, value) => { writes.push([key, value]); storage.set(key, value); } },
+    TextEncoder, Uint8Array, crypto:{subtle:null}, formatBytes:n=>String(n),
     Event: class { constructor(type) { this.type = type; } }, requestAnimationFrame: fn => fn(), scrollToWorkspaceHeader() {}, showToast() {}, renderSmartSuggestions() {}, initTool(id) { opens.push(id); }
   };
   for (const match of toolDefinitions.matchAll(/id:'([^']+)'[^\n]+render:(\w+)/g)) context[match[2]] = () => match[1];
   vm.createContext(context);
-  vm.runInContext(toolDefinitions + '\n' + aliasDefinitions + '\n' + seedDefinitions + '\n' + names.map(extract).join('\n') + '\nthis.seedSelectorsForTest=seedSelectors;', context);
+  vm.runInContext(source.slice(source.indexOf('    const translations = {'),source.indexOf('    const icons = {')) + '\n' + toolDefinitions + '\n' + aliasDefinitions + '\n' + seedDefinitions + '\n' + names.map(extract).join('\n') + '\nthis.seedSelectorsForTest=seedSelectors;', context);
   for (const marker of ["$('#toolSearch').addEventListener('input'", "$('#toolSearch').addEventListener('keydown'", "document.addEventListener('keydown'", "window.addEventListener('hashchange'"]) {
     vm.runInContext(source.split('\n').find(line => line.trim().startsWith(marker)), context);
   }
@@ -195,7 +199,7 @@ for (const lang of ['ja', 'en']) {
   test(`${lang} header uses localized EN/JA destination controls and accurate privacy/help labels`, () => {
     const h = harness({ language: lang });
     const translations = source.slice(source.indexOf('    const translations = {'), source.indexOf('    const icons = {'));
-    h.run(translations + '\n' + extract('t'));
+    h.run(extract('t'));
     const privacy = h.node('#privacyForTest'), helpTitle = h.node('#helpTitleForTest');
     privacy.dataset.i18n = 'localOnly'; helpTitle.dataset.i18n = 'helpTitle';
     const originalQuery = h.context.$$;
@@ -215,3 +219,49 @@ for (const lang of ['ja', 'en']) {
     assert.deepEqual(h.writes, []);
   });
 }
+
+test('favorites storage failure retains current list, survives language render and retries exact IDs',()=>{
+ const h=harness();const set=h.context.localStorage.setItem;h.context.localStorage.setItem=()=>{throw Error('quota')};
+ h.run("toggleFavorite('json')");assert.deepEqual([...h.context.favorites],['json']);assert.equal(h.context.favoritesFailure,'write');assert.equal(h.node('#retryFavorites').hidden,false);
+ h.context.language='ja';h.run('applyLanguage()');assert.equal(h.context.favoritesFailure,'write');assert.deepEqual(h.writes,[]);
+ h.context.localStorage.setItem=set;h.run('persistFavorites()');assert.equal(h.context.favoritesFailure,null);assert.equal(h.storage.get('httpapps-developer-toolbox:favorites'),'["json"]');
+});
+test('corrupt saved favorites cannot be silently overwritten by a toggle or language render',()=>{
+ const h=harness();h.storage.set('httpapps-developer-toolbox:favorites','{broken');h.run('favorites=loadFavorites()');h.run("toggleFavorite('json');applyLanguage()");
+ assert.equal(h.context.favoritesFailure,'read');assert.equal(h.storage.get('httpapps-developer-toolbox:favorites'),'{broken');assert.deepEqual(h.writes,[]);
+});
+test('reset Cancel retains data, pending confirmation locks mutations, and failed delete retains old list',async()=>{
+ const h=harness({favorites:['json']});let answer;h.context.AppConfirm.ask=()=>new Promise(r=>{answer=r});
+ const pending=h.run('resetFavorites()');h.run("toggleFavorite('csv')");assert.deepEqual([...h.context.favorites],['json']);answer(false);await pending;assert.deepEqual([...h.context.favorites],['json']);assert.deepEqual(h.writes,[]);
+ h.context.localStorage.setItem=()=>{throw Error('denied')};const deletion=h.run('resetFavorites()');answer(true);await deletion;assert.deepEqual([...h.context.favorites],['json']);assert.equal(h.context.favoritesFailure,'write');
+});
+test('reset removes only favorites; shared language and tool inputs survive',async()=>{
+ const h=harness({favorites:['json']});h.storage.set(BrowserKittyUI.languageKey,'ja');h.node('#base64Input').value='secret';h.context.AppConfirm.ask=async()=>true;await h.run('resetFavorites()');
+ assert.equal(h.storage.get('httpapps-developer-toolbox:favorites'),'[]');assert.equal(h.storage.get(BrowserKittyUI.languageKey),'ja');assert.equal(h.node('#base64Input').value,'secret');assert.equal(h.node('#resetPersonalization').focused,true);
+});
+test('language refresh preserves result/file nodes and does not restart in-flight work or write storage',()=>{
+ const h=harness();const file=h.node('#base64File'),result=h.node('#base64Output');file.files=[{name:'private.bin'}];result.textContent='exact random output';h.node('#base64Input').value='draft';h.context.language='ja';h.run('applyLanguage()');
+ assert.strictEqual(h.node('#base64File'),file);assert.equal(file.files[0].name,'private.bin');assert.equal(result.textContent,'exact random output');assert.deepEqual(h.opens,[]);assert.deepEqual(h.writes,[]);
+});
+test('hash captures algorithm and input, prevents double submit, rejects edited-source completion and preserves old result on failure',async()=>{
+ const h=harness();let digestResolve,calls=[];h.context.crypto.subtle={digest:(alg,data)=>{calls.push([alg,Buffer.from(data).toString()]);return new Promise(r=>digestResolve=r)}};
+ h.node('#hashText').value='first';h.node('#hashAlgorithm').value='SHA-256';h.node('#hashOutput').textContent='old';h.run('initHash()');const run=h.node('#hashCalculate').onclick;
+ const pending=run();await run();assert.equal(calls.length,1);assert.equal(h.node('#hashCalculate').disabled,true);h.node('#hashText').value='second';h.node('#hashText').emit('input');digestResolve(new Uint8Array([255]).buffer);await pending;
+ assert.deepEqual(calls,[['SHA-256','first']]);assert.equal(h.node('#hashOutput').textContent,'old');assert.equal(h.node('#hashCalculate').disabled,false);
+ h.context.crypto.subtle.digest=async()=>{throw Error('digest rejected')};await run();assert.equal(h.node('#hashOutput').textContent,'old');assert.match(h.node('#hashStatus').textContent,/processingFailed/);
+});
+test('HMAC captures message before import resolves and ignores edits during asynchronous work',async()=>{
+ const h=harness();let importResolve,signed=[];h.context.crypto.subtle={importKey:()=>new Promise(r=>importResolve=r),sign:async(_,key,data)=>{signed.push(Buffer.from(data).toString());return new Uint8Array([1]).buffer}};
+ h.node('#hmacInput').value='original';h.node('#hmacKey').value='secret';h.node('#hmacAlgorithm').value='SHA-256';h.node('#hmacOutput').textContent='previous';h.run('initHmac()');h.node('#hmacInput').value='new';h.node('#hmacInput').emit('input');importResolve({});await new Promise(r=>setImmediate(r));
+ assert.deepEqual(signed,['original']);assert.equal(h.node('#hmacOutput').textContent,'previous');assert.equal(h.node('#hmacRun').disabled,false);
+});
+test('clipboard fallback removes textarea after thrown copy, restores only owned focus, and keeps persistent recovery',async()=>{
+ const h=harness();let removed=0;const prior=h.node('#base64Input');h.context.document.activeElement=prior;h.context.navigator={clipboard:{writeText:async()=>{throw Error('clipboard denied')}}};
+ h.context.document.createElement=()=>({style:{},focus(){h.context.document.activeElement=this},select(){},remove(){removed++}});h.context.document.body={append(){}};h.context.document.execCommand=()=>{throw Error('copy denied')};
+ await h.run("copyText('snapshot')");assert.equal(removed,1);assert.equal(prior.focused,true);assert.equal(h.context.copyFailure,'snapshot');assert.equal(h.node('#retryCopy').hidden,false);
+ prior.focused=false;h.context.document.activeElement=prior;h.context.document.execCommand=()=>{h.context.document.activeElement=h.node('#helpButton');return false};await h.run("copyText('next')");assert.equal(removed,2);assert.equal(prior.focused,false);
+});
+test('language resolution honors URL, common, legacy and ordered browser choices without writes',()=>{
+ const h=harness();h.storage.set('legacy','ja');const opts={url:'https://example.test/?lang=en',storage:h.context.localStorage,legacyKeys:['legacy'],languages:['fr','ja-JP','en-US']};
+ assert.equal(BrowserKittyUI.resolveLanguage(opts),'en');opts.url='https://example.test/?lang=wrong';assert.equal(BrowserKittyUI.resolveLanguage(opts),'ja');h.storage.set(BrowserKittyUI.languageKey,'en');assert.equal(BrowserKittyUI.resolveLanguage(opts),'en');h.storage.clear();assert.equal(BrowserKittyUI.resolveLanguage(opts),'ja');assert.deepEqual(h.writes,[]);
+});

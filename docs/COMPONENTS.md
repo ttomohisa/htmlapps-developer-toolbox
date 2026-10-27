@@ -97,3 +97,6 @@ The helper handles section scrolling, active destination state, and `Intersectio
 - Keep `env(safe-area-inset-bottom)` padding and enough body bottom padding so content cannot hide behind the bar.
 - The bar is for smartphone ergonomics; desktop layout should keep normal in-flow controls.
 - Preserve visible focus, `aria-current` for active navigation items, and native `disabled` semantics.
+
+## Common UI conventions v1
+Fixed `ui-conventions.js` / `.css` are embedded at build time and hash-checked by the lock. Application callbacks own confirmations, storage and asynchronous work; the shared API only resolves language, renders save status and styles explicitly marked actions. Navigation/choice selection remains application-owned.
